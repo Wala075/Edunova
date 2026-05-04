@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="760.0" prefWidth="900.0" spacing="22.0"
+      styleClass="app-root" stylesheets="@dashboard.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.AjouterNote">
+    <padding><Insets bottom="36.0" left="40.0" right="40.0" top="36.0"/></padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="14.0">
+        <Button onAction="#retour" styleClass="back-btn" text="◀"/>
+        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+            <Label styleClass="app-title" text="Ajouter une note"/>
+            <Label styleClass="app-subtitle" text="Saisir une nouvelle évaluation pour un élève"/>
+        </VBox>
+    </HBox>
+
+    <!-- Pink pastel form card -->
+    <VBox spacing="18.0" styleClass="pastel-pink">
+        <padding><Insets bottom="28.0" left="28.0" right="28.0" top="26.0"/></padding>
+
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="card-tag">
+                <Label text="📝"/>
+                <Label styleClass="card-tag-text" text="Détails de l'évaluation"/>
+            </HBox>
+        </HBox>
+
+        <!-- Row 1 : Classe (full width) -->
+        <HBox spacing="14.0">
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="label-on-pastel" text="CLASSE"/>
+                <ComboBox fx:id="cbClasse" maxWidth="1.7976931348623157E308" prefHeight="40.0"
+                          promptText="Sélectionner une classe" styleClass="combo-pill"/>
+            </VBox>
+        </HBox>
+
+        <!-- Row 2 : Élève + Matière (filtered by class) -->
+        <HBox spacing="14.0">
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="label-on-pastel" text="ÉLÈVE"/>
+                <ComboBox fx:id="cbEleve" maxWidth="1.7976931348623157E308" prefHeight="40.0"
+                          promptText="Sélectionner un élève" styleClass="combo-pill"/>
+            </VBox>
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="label-on-pastel" text="MATIÈRE"/>
+                <ComboBox fx:id="cbMatiere" maxWidth="1.7976931348623157E308" prefHeight="40.0"
+                          promptText="Sélectionner une matière" styleClass="combo-pill"/>
+            </VBox>
+        </HBox>
+
+        <!-- Row 3 : Note + Coefficient + Trimestre -->
+        <HBox spacing="14.0">
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="label-on-pastel" text="NOTE  / 20"/>
+                <TextField fx:id="tfValeur" prefHeight="40.0" promptText="0 - 20" styleClass="input-pill"/>
+            </VBox>
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="label-on-pastel" text="COEFFICIENT"/>
+                <TextField fx:id="tfCoefficient" prefHeight="40.0" styleClass="input-pill" text="1"/>
+            </VBox>
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="label-on-pastel" text="TRIMESTRE"/>
+                <ComboBox fx:id="cbTrimestre" maxWidth="1.7976931348623157E308" prefHeight="40.0"
+                          promptText="Trimestre" styleClass="combo-pill"/>
+            </VBox>
+        </HBox>
+
+        <!-- Row 4 : Type + Date + Année scolaire -->
+        <HBox spacing="14.0">
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="label-on-pastel" text="TYPE D'ÉVALUATION"/>
+                <ComboBox fx:id="cbType" maxWidth="1.7976931348623157E308" prefHeight="40.0"
+                          promptText="Type" styleClass="combo-pill"/>
+            </VBox>
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="label-on-pastel" text="DATE"/>
+                <DatePicker fx:id="dpDate" maxWidth="1.7976931348623157E308" prefHeight="40.0" styleClass="combo-pill"/>
+            </VBox>
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="label-on-pastel" text="ANNÉE SCOLAIRE"/>
+                <TextField fx:id="tfAnnee" prefHeight="40.0" styleClass="input-pill" text="2024-2025"/>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <!-- Actions -->
+    <HBox alignment="CENTER_LEFT" spacing="10.0">
+        <Button onAction="#voirListe" styleClass="btn-secondary" text="📋  Voir la liste"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button onAction="#annuler" styleClass="btn-secondary" text="Annuler"/>
+        <Button onAction="#ajouterNote" styleClass="btn-primary" text="✓  Ajouter la note"/>
+    </HBox>
+</VBox>

@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="rootPane" prefHeight="760" prefWidth="1280"
+            stylesheets="@dashboard.css" styleClass="root-dark"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.Dashboard">
+
+    <!-- ══════════════ SIDEBAR ══════════════ -->
+    <left>
+        <VBox fx:id="sidebar" prefWidth="260" styleClass="pro-sidebar">
+
+            <!-- Logo block -->
+            <VBox alignment="CENTER" spacing="2" style="-fx-padding: 28 20 20 20;">
+                <Label styleClass="pro-logo" text="EduNova"/>
+                <Label styleClass="pro-logo-sub"
+                       text="Application de gestion scolaire"/>
+            </VBox>
+
+            <Region styleClass="pro-sep"/>
+
+            <!-- User block -->
+            <VBox alignment="CENTER" spacing="2" style="-fx-padding: 18 15;">
+                <StackPane alignment="CENTER" styleClass="pro-avatar">
+                    <Label fx:id="lbAvatarInitiales" styleClass="pro-avatar-text" text="W"/>
+                </StackPane>
+                <Label fx:id="lbHelloName" styleClass="pro-user-name"
+                       style="-fx-padding: 10 0 4 0;" text="Walaeddine"/>
+                <Label fx:id="lbProfileName" styleClass="pro-user-role" text="Professeur"/>
+            </VBox>
+
+            <Region styleClass="pro-sep"/>
+
+            <!-- Menu -->
+            <VBox spacing="4" style="-fx-padding: 16 12;">
+                <Button fx:id="btnMenuDashboard" maxWidth="Infinity"
+                        onAction="#handleMenuDashboard"
+                        styleClass="pro-menu-active" text="🏠     Tableau de bord"/>
+                <Button fx:id="btnMenuAjouter" maxWidth="Infinity"
+                        onAction="#handleMenuAjouter"
+                        styleClass="pro-menu" text="➕     Ajouter une note"/>
+                <Button fx:id="btnMenuListe" maxWidth="Infinity"
+                        onAction="#handleMenuListe"
+                        styleClass="pro-menu" text="📖     Liste des notes"/>
+                <Button fx:id="btnMenuBulletin" maxWidth="Infinity"
+                        onAction="#handleMenuBulletin"
+                        styleClass="pro-menu" text="📊     Bulletins"/>
+                <StackPane>
+                    <Button fx:id="btnMenuAlertes" maxWidth="Infinity"
+                            onAction="#handleMenuAlertes"
+                            styleClass="pro-menu" text="🔔     Alertes"/>
+                    <Label fx:id="lbAlerteBadge" styleClass="pro-badge" text="0"
+                           translateX="92" visible="false"/>
+                </StackPane>
+                <Button fx:id="btnMenuCalendrier" maxWidth="Infinity"
+                        onAction="#handleMenuCalendrier"
+                        styleClass="pro-menu" text="📅     Calendrier"/>
+                <Button fx:id="btnMenuParents" maxWidth="Infinity"
+                        onAction="#handleMenuParents"
+                        styleClass="pro-menu" text="👨‍👩‍👧  Coordonnées parents"/>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- Bottom : theme + logout -->
+            <VBox spacing="10" style="-fx-padding: 12 14 22 14;">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label styleClass="pro-theme-label" text="🌓  Mode"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnToggleTheme" onAction="#handleToggleTheme"
+                            styleClass="pro-theme-btn" text="Light"/>
+                </HBox>
+                <Button maxWidth="Infinity" onAction="#handleDeconnexion"
+                        styleClass="pro-logout" text="🚪    Déconnexion"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- ══════════════ CENTER ══════════════ -->
+    <center>
+        <VBox fx:id="mainContent" styleClass="pro-main">
+
+            <!-- NAVBAR -->
+            <HBox alignment="CENTER_LEFT" spacing="14" styleClass="pro-navbar">
+                <VBox spacing="2">
+                    <Label fx:id="lblPageTitre" styleClass="pro-page-title"
+                           text="Tableau de bord"/>
+                    <Label fx:id="lblPageSousTitre" styleClass="pro-page-sub"
+                           text="Vue d'ensemble de l'établissement"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="txtRechercheGlobal" prefWidth="240"
+                           promptText="🔍  Rechercher..." styleClass="pro-search"/>
+                <Label fx:id="lblDateHeure" styleClass="pro-date" text="—"/>
+            </HBox>
+
+            <Region styleClass="pro-sep-h"/>
+
+            <!-- CONTENT -->
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                        styleClass="pro-scroll" VBox.vgrow="ALWAYS">
+                <VBox spacing="22" style="-fx-padding: 26 28 30 28;">
+
+                    <!-- Section title -->
+                    <VBox spacing="4">
+                        <Label styleClass="pro-section-title" text="Vue d'ensemble"/>
+                        <Label styleClass="pro-section-sub"
+                               text="Statistiques et activité récente"/>
+                    </VBox>
+
+                    <!-- ===== STATS CARDS (4) ===== -->
+                    <HBox spacing="16">
+                        <!-- Étudiants -->
+                        <VBox styleClass="pro-stat-card,pro-stat-violet" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <StackPane styleClass="pro-stat-icon,pro-stat-icon-violet">
+                                    <Label text="👥" styleClass="pro-stat-emoji"/>
+                                </StackPane>
+                                <VBox>
+                                    <Label styleClass="pro-stat-label" text="Étudiants"/>
+                                    <Label fx:id="lbStudentsCount" styleClass="pro-stat-value,pro-violet-text" text="0"/>
+                                </VBox>
+                            </HBox>
+                            <Label styleClass="pro-stat-foot,pro-violet-text"
+                                   text="Inscrits cette année"/>
+                        </VBox>
+
+                        <!-- Notes saisies -->
+                        <VBox styleClass="pro-stat-card,pro-stat-blue" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <StackPane styleClass="pro-stat-icon,pro-stat-icon-blue">
+                                    <Label text="📝" styleClass="pro-stat-emoji"/>
+                                </StackPane>
+                                <VBox>
+                                    <Label styleClass="pro-stat-label" text="Notes saisies"/>
+                                    <Label fx:id="lbActivityCount" styleClass="pro-stat-value,pro-blue-text" text="0"/>
+                                </VBox>
+                            </HBox>
+                            <Label styleClass="pro-stat-foot,pro-blue-text"
+                                   text="Évaluations sur l'année"/>
+                        </VBox>
+
+                        <!-- Alertes -->
+                        <VBox styleClass="pro-stat-card,pro-stat-red" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <StackPane styleClass="pro-stat-icon,pro-stat-icon-red">
+                                    <Label text="🔔" styleClass="pro-stat-emoji"/>
+                                </StackPane>
+                                <VBox>
+                                    <Label styleClass="pro-stat-label" text="Alertes nouvelles"/>
+                                    <Label fx:id="lbAlertesCount" styleClass="pro-stat-value,pro-red-text" text="0"/>
+                                </VBox>
+                            </HBox>
+                            <Label styleClass="pro-stat-foot,pro-red-text"
+                                   text="À traiter"/>
+                        </VBox>
+
+                        <!-- Moyenne -->
+                        <VBox styleClass="pro-stat-card,pro-stat-green" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <StackPane styleClass="pro-stat-icon,pro-stat-icon-green">
+                                    <Label text="📈" styleClass="pro-stat-emoji"/>
+                                </StackPane>
+                                <VBox>
+                                    <Label styleClass="pro-stat-label" text="Moyenne école"/>
+                                    <Label fx:id="lbMoyenneEcole" styleClass="pro-stat-value,pro-green-text" text="—"/>
+                                </VBox>
+                            </HBox>
+                            <Label styleClass="pro-stat-foot,pro-green-text"
+                                   text="Toutes matières"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- ===== Mes matières (cards) ===== -->
+                    <VBox spacing="16" styleClass="pro-card-block">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <VBox spacing="2">
+                                <Label styleClass="pro-block-title" text="Mes matières"/>
+                                <Label styleClass="pro-block-sub"
+                                       text="Vue rapide par discipline"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="lbCurrentAnnee" styleClass="pro-pill"
+                                   text="—"/>
+                        </HBox>
+
+                        <HBox spacing="14" fx:id="matieresRow">
+                            <VBox fx:id="m1Card" styleClass="pro-mat-card" HBox.hgrow="ALWAYS"
+                                  onMouseClicked="#openMatiere1">
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label fx:id="m1Tag" styleClass="pro-mat-tag" text="—"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="m1Rating" styleClass="pro-mat-rating" text="—"/>
+                                </HBox>
+                                <Label fx:id="m1Title" styleClass="pro-mat-title" text="—"/>
+                                <Label fx:id="m1Students" styleClass="pro-mat-sub" text="—"/>
+                            </VBox>
+
+                            <VBox fx:id="m2Card" styleClass="pro-mat-card" HBox.hgrow="ALWAYS"
+                                  onMouseClicked="#openMatiere2">
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label fx:id="m2Tag" styleClass="pro-mat-tag" text="—"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="m2Rating" styleClass="pro-mat-rating" text="—"/>
+                                </HBox>
+                                <Label fx:id="m2Title" styleClass="pro-mat-title" text="—"/>
+                                <Label fx:id="m2Students" styleClass="pro-mat-sub" text="—"/>
+                            </VBox>
+
+                            <VBox fx:id="m3Card" styleClass="pro-mat-card" HBox.hgrow="ALWAYS"
+                                  onMouseClicked="#openMatiere3">
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label fx:id="m3Tag" styleClass="pro-mat-tag" text="—"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="m3Rating" styleClass="pro-mat-rating" text="—"/>
+                                </HBox>
+                                <Label fx:id="m3Title" styleClass="pro-mat-title" text="—"/>
+                                <Label fx:id="m3Students" styleClass="pro-mat-sub" text="—"/>
+                            </VBox>
+
+                            <VBox fx:id="m4Card" styleClass="pro-mat-card" HBox.hgrow="ALWAYS"
+                                  onMouseClicked="#openMatiere4">
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label fx:id="m4Tag" styleClass="pro-mat-tag" text="—"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="m4Rating" styleClass="pro-mat-rating" text="—"/>
+                                </HBox>
+                                <Label fx:id="m4Title" styleClass="pro-mat-title" text="—"/>
+                                <Label fx:id="m4Students" styleClass="pro-mat-sub" text="—"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- ===== Bottom row : repartition + actions ===== -->
+                    <HBox spacing="16">
+
+                        <!-- Excellence vs Difficulté -->
+                        <VBox styleClass="pro-card-block" HBox.hgrow="ALWAYS">
+                            <Label styleClass="pro-block-title" text="Répartition des élèves"/>
+                            <Label styleClass="pro-block-sub"
+                                   text="Selon leur moyenne générale"
+                                   style="-fx-padding: 0 0 14 0;"/>
+                            <HBox alignment="CENTER" spacing="20">
+                                <VBox alignment="CENTER" spacing="4">
+                                    <Label fx:id="lbExcellence"
+                                           styleClass="pro-big-stat,pro-green-text"
+                                           text="0"/>
+                                    <Label styleClass="pro-stat-label" text="🟢 Excellence (≥16)"/>
+                                </VBox>
+                                <Label styleClass="pro-big-sep" text="/"/>
+                                <VBox alignment="CENTER" spacing="4">
+                                    <Label fx:id="lbReussite"
+                                           styleClass="pro-big-stat,pro-blue-text"
+                                           text="0"/>
+                                    <Label styleClass="pro-stat-label" text="🔵 Réussite (≥10)"/>
+                                </VBox>
+                                <Label styleClass="pro-big-sep" text="/"/>
+                                <VBox alignment="CENTER" spacing="4">
+                                    <Label fx:id="lbDifficulte"
+                                           styleClass="pro-big-stat,pro-red-text"
+                                           text="0"/>
+                                    <Label styleClass="pro-stat-label" text="🔴 Difficulté (&lt;10)"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Actions rapides -->
+                        <VBox styleClass="pro-card-block" HBox.hgrow="ALWAYS">
+                            <Label styleClass="pro-block-title" text="Actions rapides"/>
+                            <Label styleClass="pro-block-sub"
+                                   text="Raccourcis vers les écrans clés"
+                                   style="-fx-padding: 0 0 14 0;"/>
+                            <VBox spacing="10">
+                                <Button maxWidth="Infinity" onAction="#handleMenuAjouter"
+                                        styleClass="pro-action-primary"
+                                        text="➕    Ajouter une note"/>
+                                <Button maxWidth="Infinity" onAction="#handleMenuAlertes"
+                                        styleClass="pro-action-danger"
+                                        text="✨    Lancer scan intelligent"/>
+                                <Button maxWidth="Infinity" onAction="#handleMenuBulletin"
+                                        styleClass="pro-action-secondary"
+                                        text="📊    Générer un bulletin"/>
+                            </VBox>
+                        </VBox>
+
+                    </HBox>
+
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>
