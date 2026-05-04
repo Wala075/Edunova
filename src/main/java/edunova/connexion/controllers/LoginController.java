@@ -2,10 +2,7 @@ package edunova.connexion.controllers;
 
 import edunova.connexion.dao.UserDAO;
 import edunova.connexion.models.User;
-import edunova.connexion.tools.DatabaseConnection;
-import edunova.connexion.tools.GoogleAuthService;
-import edunova.connexion.tools.PasswordUtils;
-import edunova.connexion.tools.SessionManager;
+import edunova.connexion.tools.*;
 
 import com.google.api.services.oauth2.model.Userinfo;
 
@@ -53,6 +50,7 @@ public class LoginController {
     @FXML private Label            errRegConfirm;
     @FXML private Label            errRegRole;
     @FXML private Label            errCgu;
+    @FXML private Button btnGoogleLogin;
 
     // ── Captcha ───────────────────────────────────────────────────
     @FXML private Label  lblCaptchaStatut;
@@ -105,59 +103,85 @@ public class LoginController {
                                 true, btnPaysReg));
     }
 
-    // ── Ouvrir hCaptcha ───────────────────────────────────────────
+    // ── Ouvrir hCaptcha dans le navigateur système ────────────────
     @FXML
     private void handleOuvrirCaptcha() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/views/captcha_window.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("EduNova — Vérification");
-            stage.setScene(new Scene(loader.load()));
-            stage.setResizable(false);
-            stage.initModality(
-                    Modality.APPLICATION_MODAL);
-            stage.initOwner(
-                    txtEmailO.getScene().getWindow());
+        // Désactiver le bouton pendant la vérification
+        btnOuvrirCaptcha.setDisable(true);
+        btnOuvrirCaptcha.setText("⏳ Ouverture...");
+        errCaptcha.setText("");
 
-            CaptchaController ctrl =
-                    loader.getController();
-            ctrl.setOnSuccessCallback(() ->
+        new Thread(() -> {
+            try {
+                HCaptchaServer server = new HCaptchaServer();
+
+                // Ouvrir le navigateur avec la page captcha
+                Platform.runLater(() ->
+                        HCaptchaService.ouvrirNavigateur(
+                                "http://localhost:7654/captcha"));
+
+                // Attendre le token (max 120 secondes)
+                String token = server.attendreToken(120);
+
+                if (token != null && !token.isEmpty()) {
+                    // Vérifier avec l'API hCaptcha
+                    boolean ok =
+                            HCaptchaService.verifier(token);
+
                     Platform.runLater(() -> {
-                        captchaValide = true;
-                        btnOuvrirCaptcha.setText(
-                                "✅  Vérification réussie");
-                        btnOuvrirCaptcha.setStyle(
-                                "-fx-background-color: #f0fdf4;" +
-                                        "-fx-text-fill: #16a34a;" +
-                                        "-fx-font-size: 12;" +
-                                        "-fx-font-weight: bold;" +
-                                        "-fx-background-radius: 8;" +
-                                        "-fx-padding: 10;" +
-                                        "-fx-border-color: #22c55e;" +
-                                        "-fx-border-radius: 8;" +
-                                        "-fx-border-width: 1.5;" +
-                                        "-fx-cursor: hand;");
-                        lblCaptchaStatut.setText(
-                                "✅ Humain confirmé");
-                        lblCaptchaStatut.setStyle(
-                                "-fx-font-size: 11;" +
-                                        "-fx-text-fill: #22c55e;" +
-                                        "-fx-font-weight: bold;");
-                        errCaptcha.setText("");
-                    }));
+                        if (ok) {
+                            captchaValide = true;
+                            btnOuvrirCaptcha.setDisable(false);
+                            btnOuvrirCaptcha.setText(
+                                    "✅  Vérification réussie");
+                            btnOuvrirCaptcha.setStyle(
+                                    "-fx-background-color: #f0fdf4;" +
+                                            "-fx-text-fill: #16a34a;" +
+                                            "-fx-font-size: 12;" +
+                                            "-fx-font-weight: bold;" +
+                                            "-fx-background-radius: 8;" +
+                                            "-fx-padding: 10;" +
+                                            "-fx-border-color: #22c55e;" +
+                                            "-fx-border-radius: 8;" +
+                                            "-fx-border-width: 1.5;" +
+                                            "-fx-cursor: hand;");
+                            lblCaptchaStatut.setText(
+                                    "✅ Humain confirmé");
+                            lblCaptchaStatut.setStyle(
+                                    "-fx-font-size: 11;" +
+                                            "-fx-text-fill: #22c55e;" +
+                                            "-fx-font-weight: bold;");
+                            errCaptcha.setText("");
+                        } else {
+                            btnOuvrirCaptcha.setDisable(false);
+                            resetCaptcha();
+                            errCaptcha.setText(
+                                    "⚠ Vérification échouée," +
+                                            " réessayez.");
+                        }
+                    });
+                } else {
+                    // Timeout
+                    Platform.runLater(() -> {
+                        btnOuvrirCaptcha.setDisable(false);
+                        resetCaptcha();
+                        errCaptcha.setText(
+                                "⚠ Délai dépassé, réessayez.");
+                    });
+                }
 
-            stage.show();
-
-        } catch (Exception ex) {
-            showAlert("Erreur captcha : " +
-                    ex.getMessage());
-            ex.printStackTrace();
-        }
+            } catch (Exception ex) {
+                Platform.runLater(() -> {
+                    btnOuvrirCaptcha.setDisable(false);
+                    resetCaptcha();
+                    errCaptcha.setText(
+                            "⚠ Erreur: " + ex.getMessage());
+                });
+                ex.printStackTrace();
+            }
+        }).start();
     }
 
-    // ── Reset captcha ─────────────────────────────────────────────
     private void resetCaptcha() {
         captchaValide = false;
         btnOuvrirCaptcha.setText("  Cliquez pour vérifier");
@@ -175,7 +199,6 @@ public class LoginController {
         lblCaptchaStatut.setText("");
         errCaptcha.setText("");
     }
-
     // ══════════════════════════════════════════════════════════════
     //  DROPDOWN TÉLÉPHONE
     // ══════════════════════════════════════════════════════════════
@@ -318,8 +341,9 @@ public class LoginController {
 
     @FXML
     private void handleGoogleLogin() {
-        showAlert("🔄 Ouverture du navigateur Google...\n\n" +
-                "Une fenêtre va s'ouvrir dans votre navigateur.");
+        // Pas de popup — traitement direct en arrière-plan
+        btnGoogleLogin.setDisable(true);
+        btnGoogleLogin.setText("⏳ Connexion Google...");
 
         new Thread(() -> {
             try {
@@ -330,13 +354,23 @@ public class LoginController {
                         ? userInfo.getFamilyName() : "";
                 String prenom = userInfo.getGivenName() != null
                         ? userInfo.getGivenName() : "";
-                Platform.runLater(() ->
-                        traiterConnexionGoogle(
-                                email, nom, prenom));
+
+                Platform.runLater(() -> {
+                    btnGoogleLogin.setDisable(false);
+                    btnGoogleLogin.setText(
+                            "  G   Continuer avec Google");
+                    traiterConnexionGoogle(
+                            email, nom, prenom);
+                });
+
             } catch (Exception ex) {
-                Platform.runLater(() ->
-                        showAlert("❌ Erreur Google :\n" +
-                                ex.getMessage()));
+                Platform.runLater(() -> {
+                    btnGoogleLogin.setDisable(false);
+                    btnGoogleLogin.setText(
+                            "  G   Continuer avec Google");
+                    showAlert("❌ Erreur Google :\n" +
+                            ex.getMessage());
+                });
             }
         }).start();
     }

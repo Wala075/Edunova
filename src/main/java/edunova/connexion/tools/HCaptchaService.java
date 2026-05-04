@@ -17,8 +17,11 @@ public class HCaptchaService {
             "https://hcaptcha.com/siteverify";
 
     public static boolean verifier(String token) {
-        if (token == null || token.isEmpty())
+        if (token == null || token.isEmpty()) {
+            System.out.println(
+                    "hCaptcha: token vide");
             return false;
+        }
         try {
             URL url = new URL(VERIFY_URL);
             HttpURLConnection conn =
@@ -28,8 +31,8 @@ public class HCaptchaService {
             conn.setRequestProperty(
                     "Content-Type",
                     "application/x-www-form-urlencoded");
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(8000);
+            conn.setReadTimeout(8000);
 
             String params =
                     "secret=" + URLEncoder.encode(
@@ -38,6 +41,9 @@ public class HCaptchaService {
                             "&response=" + URLEncoder.encode(
                             token,
                             StandardCharsets.UTF_8);
+
+            System.out.println(
+                    "hCaptcha: envoi vérification...");
 
             try (OutputStream os =
                          conn.getOutputStream()) {
@@ -50,21 +56,45 @@ public class HCaptchaService {
             try (BufferedReader br =
                          new BufferedReader(
                                  new InputStreamReader(
-                                         conn.getInputStream()))) {
+                                         conn.getInputStream(),
+                                         StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = br.readLine()) != null)
                     response.append(line);
             }
 
+            String resp = response.toString();
             System.out.println(
-                    "hCaptcha response: " + response);
-            return response.toString()
-                    .contains("\"success\":true");
+                    "hCaptcha response: " + resp);
+            return resp.contains("\"success\":true");
 
         } catch (Exception e) {
             System.out.println(
-                    "Erreur hCaptcha : " + e.getMessage());
+                    "hCaptcha erreur: " + e.getMessage());
+            e.printStackTrace();
             return false;
+        }
+    }
+
+    // ── Ouvrir le navigateur système ──────────────────────────────
+    public static void ouvrirNavigateur(String url) {
+        try {
+            String os = System.getProperty("os.name")
+                    .toLowerCase();
+            Runtime rt = Runtime.getRuntime();
+            if (os.contains("win")) {
+                rt.exec(new String[]{
+                        "rundll32", "url.dll,FileProtocolHandler",
+                        url});
+            } else if (os.contains("mac")) {
+                rt.exec(new String[]{"open", url});
+            } else {
+                rt.exec(new String[]{"xdg-open", url});
+            }
+        } catch (Exception e) {
+            System.out.println(
+                    "Erreur ouverture navigateur: " +
+                            e.getMessage());
         }
     }
 }

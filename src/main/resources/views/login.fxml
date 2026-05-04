@@ -265,7 +265,8 @@
             <Region prefHeight="12"/>
 
             <!-- Bouton Google -->
-            <Button text="  G   Continuer avec Google"
+            <Button fx:id="btnGoogleLogin"
+                    text="  G   Continuer avec Google"
                     onAction="#handleGoogleLogin"
                     maxWidth="Infinity"
                     style="-fx-background-color: white;
