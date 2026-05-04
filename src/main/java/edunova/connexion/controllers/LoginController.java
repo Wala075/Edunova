@@ -54,6 +54,12 @@ public class LoginController {
     @FXML private Label            errRegRole;
     @FXML private Label            errCgu;
 
+    // ── Captcha ───────────────────────────────────────────────────
+    @FXML private Label  lblCaptchaStatut;
+    @FXML private Button btnOuvrirCaptcha;
+    @FXML private Label  errCaptcha;
+    private boolean captchaValide = false;
+
     // ── Dropdown téléphone ────────────────────────────────────────
     @FXML private Button    btnPaysReg;
     @FXML private VBox      dropdownPaysReg;
@@ -97,6 +103,77 @@ public class LoginController {
                 .addListener((obs, old, n) ->
                         filtrerPays(n, listePaysReg,
                                 true, btnPaysReg));
+    }
+
+    // ── Ouvrir hCaptcha ───────────────────────────────────────────
+    @FXML
+    private void handleOuvrirCaptcha() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/views/captcha_window.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("EduNova — Vérification");
+            stage.setScene(new Scene(loader.load()));
+            stage.setResizable(false);
+            stage.initModality(
+                    Modality.APPLICATION_MODAL);
+            stage.initOwner(
+                    txtEmailO.getScene().getWindow());
+
+            CaptchaController ctrl =
+                    loader.getController();
+            ctrl.setOnSuccessCallback(() ->
+                    Platform.runLater(() -> {
+                        captchaValide = true;
+                        btnOuvrirCaptcha.setText(
+                                "✅  Vérification réussie");
+                        btnOuvrirCaptcha.setStyle(
+                                "-fx-background-color: #f0fdf4;" +
+                                        "-fx-text-fill: #16a34a;" +
+                                        "-fx-font-size: 12;" +
+                                        "-fx-font-weight: bold;" +
+                                        "-fx-background-radius: 8;" +
+                                        "-fx-padding: 10;" +
+                                        "-fx-border-color: #22c55e;" +
+                                        "-fx-border-radius: 8;" +
+                                        "-fx-border-width: 1.5;" +
+                                        "-fx-cursor: hand;");
+                        lblCaptchaStatut.setText(
+                                "✅ Humain confirmé");
+                        lblCaptchaStatut.setStyle(
+                                "-fx-font-size: 11;" +
+                                        "-fx-text-fill: #22c55e;" +
+                                        "-fx-font-weight: bold;");
+                        errCaptcha.setText("");
+                    }));
+
+            stage.show();
+
+        } catch (Exception ex) {
+            showAlert("Erreur captcha : " +
+                    ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    // ── Reset captcha ─────────────────────────────────────────────
+    private void resetCaptcha() {
+        captchaValide = false;
+        btnOuvrirCaptcha.setText("  Cliquez pour vérifier");
+        btnOuvrirCaptcha.setStyle(
+                "-fx-background-color: white;" +
+                        "-fx-text-fill: #374151;" +
+                        "-fx-font-size: 12;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 8;" +
+                        "-fx-padding: 10;" +
+                        "-fx-border-color: #e2e8f0;" +
+                        "-fx-border-radius: 8;" +
+                        "-fx-border-width: 1.5;" +
+                        "-fx-cursor: hand;");
+        lblCaptchaStatut.setText("");
+        errCaptcha.setText("");
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -167,6 +244,15 @@ public class LoginController {
     private void handleLogin() {
         boolean e = validerLoginEmail();
         boolean p = validerLoginPassword();
+
+        // Vérifier captcha
+        if (!captchaValide) {
+            errCaptcha.setText(
+                    "⚠ Veuillez compléter la vérification de sécurité.");
+            return;
+        }
+        errCaptcha.setText("");
+
         if (!e || !p) return;
         effectuerConnexion();
     }
@@ -204,6 +290,7 @@ public class LoginController {
                     enregistrerHistorique(conn,
                             rs.getInt("id_u"), true);
                     ouvrirDashboard();
+                    captchaValide = false;
 
                 } else {
                     enregistrerHistorique(conn,
@@ -211,6 +298,7 @@ public class LoginController {
                     setErreur(txtPasswordO,
                             errLoginPassword,
                             "Mot de passe incorrect.");
+                    resetCaptcha();
                 }
             } else {
                 setErreur(txtEmailO, errLoginEmail,
