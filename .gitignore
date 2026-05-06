@@ -37,3 +37,17 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+
+# Secrets
+src/main/resources/config.properties
+
+# Maven
+target/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Logs
+*.log
