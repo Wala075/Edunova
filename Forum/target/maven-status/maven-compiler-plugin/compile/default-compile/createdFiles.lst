@@ -14,8 +14,6 @@ controllers\ForumMembreController.class
 services\ChatService.class
 services\CommentLikeService.class
 interfaces\IModerationService.class
-services\WeatherService$Meteo.class
-interfaces\IWeatherService.class
 services\CommentService.class
 utils\DatabaseConnection.class
 interfaces\ICommentService.class
@@ -27,7 +25,6 @@ entities\ForumPost$Statut.class
 interfaces\IReputationService.class
 services\ModerationService.class
 interfaces\ILikeService.class
-services\WeatherService.class
 entities\Comment.class
 interfaces\IUserService.class
 entities\User.class
@@ -42,7 +39,6 @@ interfaces\IModerationService$AnalyseAdmin.class
 services\UserService.class
 services\ReputationService$Action.class
 interfaces\ITranslationService.class
-utils\GlassStyler.class
 utils\ThemeManager.class
 services\ForumService.class
 entities\ForumPost$1.class

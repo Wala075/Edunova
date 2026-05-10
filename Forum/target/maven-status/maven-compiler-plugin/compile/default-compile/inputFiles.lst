@@ -15,7 +15,6 @@ D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\interface
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\interfaces\ISignalementService.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\interfaces\ITranslationService.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\interfaces\IUserService.java
-D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\interfaces\IWeatherService.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\MainApp.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\services\ChatService.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\services\CommentLikeService.java
@@ -29,10 +28,8 @@ D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\services\
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\services\SignalementService.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\services\TranslationService.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\services\UserService.java
-D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\services\WeatherService.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\utils\AlertHelper.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\utils\DatabaseConnection.java
-D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\utils\GlassStyler.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\utils\SceneManager.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\utils\SessionManager.java
 D:\Downloads\EduNova_Forum_Fixed_v3 (44)\EduNova_Forum_Fixed\Forum\src\utils\ThemeManager.java
