@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.SeanceController"
+      spacing="16">
+    <padding><Insets top="10" right="0" bottom="10" left="0"/></padding>
+
+    <Label text="Statistiques et formulaire" styleClass="section-subtitle"/>
+
+    <!-- ===================== FORMULAIRE ===================== -->
+    <VBox styleClass="card, card-purple" spacing="12">
+        <Label text="Ajouter / Modifier une séance" styleClass="card-title"/>
+
+        <GridPane hgap="14" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints minWidth="160" prefWidth="220" hgrow="SOMETIMES"/>
+                <ColumnConstraints minWidth="160" prefWidth="220" hgrow="SOMETIMES"/>
+                <ColumnConstraints minWidth="160" prefWidth="220" hgrow="SOMETIMES"/>
+                <ColumnConstraints minWidth="160" prefWidth="220" hgrow="SOMETIMES"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints/><RowConstraints/><RowConstraints/>
+                <RowConstraints/><RowConstraints/><RowConstraints/>
+            </rowConstraints>
+
+            <Label text="Jour" styleClass="field-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="cbJour" maxWidth="Infinity" promptText="Lundi, Mardi..."
+                      GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+
+            <Label text="Heure début (HH:mm)" styleClass="field-label" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <ComboBox fx:id="cbHeureDebut" promptText="08:00" maxWidth="Infinity"
+                       GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Heure fin (HH:mm)" styleClass="field-label" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+            <ComboBox fx:id="cbHeureFin" promptText="10:00" maxWidth="Infinity"
+                       GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+
+            <Label text="Salle" styleClass="field-label" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+            <TextField fx:id="tfSalle" promptText="Ex: B-204"
+                       GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+
+            <Label text="Type de cours" styleClass="field-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="cbTypeCours" maxWidth="Infinity"
+                      GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+
+            <Label text="Date de la séance" styleClass="field-label" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            <DatePicker fx:id="dpDateSeance" maxWidth="Infinity"
+                        GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+            <Label text="Classe" styleClass="field-label" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+            <ComboBox fx:id="cbClasse" maxWidth="Infinity"
+                      GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+
+            <Label text="Matière" styleClass="field-label" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+            <ComboBox fx:id="cbMatiere" maxWidth="Infinity"
+                      GridPane.rowIndex="3" GridPane.columnIndex="3"/>
+
+            <Label text="Enseignant" styleClass="field-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="cbTeacher" maxWidth="Infinity"
+                      GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        </GridPane>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Button text="+ Ajouter"           styleClass="btn-primary"   onAction="#onAjouter"/>
+            <Button text="Modifier"            styleClass="btn-outline"   onAction="#onModifier"/>
+            <Button text="Supprimer"           styleClass="btn-danger"    onAction="#onSupprimer"/>
+            <Button text="Réinitialiser"       styleClass="btn-secondary" onAction="#onReset"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="📷 Démarrer pointage" styleClass="btn-primary"  onAction="#onDemarrerPointage"/>
+        </HBox>
+    </VBox>
+
+    <!-- ===================== SEARCH + CARDS ===================== -->
+    <VBox styleClass="card" spacing="10">
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="📋 Liste des séances" styleClass="card-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <TextField fx:id="tfSearch" promptText="🔍 Rechercher (matière, classe, enseignant...)" prefWidth="320" styleClass="search-field"/>
+            <Button text="Rechercher" styleClass="btn-primary"   onAction="#onChercher"/>
+            <Button text="Tout"       styleClass="btn-secondary" onAction="#onAfficherTout"/>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" prefHeight="420"
+                    style="-fx-background-color: transparent; -fx-background: transparent;">
+            <VBox fx:id="cardsContainer" spacing="10" style="-fx-padding: 4;"/>
+        </ScrollPane>
+    </VBox>
+</VBox>

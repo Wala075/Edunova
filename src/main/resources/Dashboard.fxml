@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.DashboardController"
+            fitToWidth="true" hbarPolicy="NEVER"
+            style="-fx-background-color: transparent; -fx-background: transparent;">
+
+<VBox spacing="20">
+    <padding><Insets top="10" right="4" bottom="20" left="0"/></padding>
+
+    <!-- En-tête -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <Label text="Tableau de bord"
+                   style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Vue d'ensemble de votre activité"
+                   style="-fx-font-size: 12; -fx-text-fill: #a8a8c0;"/>
+        </VBox>
+    </HBox>
+
+    <!-- ===================== 6 STAT CARDS (ligne 1) ===================== -->
+    <HBox spacing="14">
+        <!-- Séances -->
+        <VBox alignment="CENTER" spacing="6" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: linear-gradient(to bottom right, #6366f1, #4f46e5);
+                     -fx-background-radius: 14; -fx-padding: 18;
+                     -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.3), 14, 0, 0, 5);">
+            <Label text="📅 Séances" style="-fx-font-size: 12; -fx-text-fill: rgba(255,255,255,0.85);"/>
+            <Label fx:id="lblTotalSeances" text="0"
+                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Cours présentiels" style="-fx-font-size: 11; -fx-text-fill: rgba(255,255,255,0.6);"/>
+        </VBox>
+
+        <!-- Sessions Live -->
+        <VBox alignment="CENTER" spacing="6" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: linear-gradient(to bottom right, #06b6d4, #0891b2);
+                     -fx-background-radius: 14; -fx-padding: 18;
+                     -fx-effect: dropshadow(gaussian, rgba(6,182,212,0.3), 14, 0, 0, 5);">
+            <Label text="🎥 Sessions Live" style="-fx-font-size: 12; -fx-text-fill: rgba(255,255,255,0.85);"/>
+            <Label fx:id="lblTotalLive" text="0"
+                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Zoom / Meet" style="-fx-font-size: 11; -fx-text-fill: rgba(255,255,255,0.6);"/>
+        </VBox>
+
+        <!-- Cours -->
+        <VBox alignment="CENTER" spacing="6" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: linear-gradient(to bottom right, #8b5cf6, #7c3aed);
+                     -fx-background-radius: 14; -fx-padding: 18;
+                     -fx-effect: dropshadow(gaussian, rgba(139,92,246,0.3), 14, 0, 0, 5);">
+            <Label text="📚 Cours" style="-fx-font-size: 12; -fx-text-fill: rgba(255,255,255,0.85);"/>
+            <Label fx:id="lblTotalCours" text="0"
+                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Leçons créées" style="-fx-font-size: 11; -fx-text-fill: rgba(255,255,255,0.6);"/>
+        </VBox>
+
+        <!-- Présences -->
+        <VBox alignment="CENTER" spacing="6" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: linear-gradient(to bottom right, #10b981, #059669);
+                     -fx-background-radius: 14; -fx-padding: 18;
+                     -fx-effect: dropshadow(gaussian, rgba(16,185,129,0.3), 14, 0, 0, 5);">
+            <Label text="✅ Présences" style="-fx-font-size: 12; -fx-text-fill: rgba(255,255,255,0.85);"/>
+            <Label fx:id="lblTotalPresences" text="0"
+                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Total enregistrées" style="-fx-font-size: 11; -fx-text-fill: rgba(255,255,255,0.6);"/>
+        </VBox>
+
+        <!-- Absences -->
+        <VBox alignment="CENTER" spacing="6" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: linear-gradient(to bottom right, #ef4444, #dc2626);
+                     -fx-background-radius: 14; -fx-padding: 18;
+                     -fx-effect: dropshadow(gaussian, rgba(239,68,68,0.3), 14, 0, 0, 5);">
+            <Label text="❌ Absences" style="-fx-font-size: 12; -fx-text-fill: rgba(255,255,255,0.85);"/>
+            <Label fx:id="lblTotalAbsences" text="0"
+                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Toutes dates" style="-fx-font-size: 11; -fx-text-fill: rgba(255,255,255,0.6);"/>
+        </VBox>
+
+        <!-- Taux présence -->
+        <VBox alignment="CENTER" spacing="6" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: linear-gradient(to bottom right, #f59e0b, #d97706);
+                     -fx-background-radius: 14; -fx-padding: 18;
+                     -fx-effect: dropshadow(gaussian, rgba(245,158,11,0.3), 14, 0, 0, 5);">
+            <Label text="📊 Taux" style="-fx-font-size: 12; -fx-text-fill: rgba(255,255,255,0.85);"/>
+            <Label fx:id="lblTauxPresence" text="—"
+                   style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Présence globale" style="-fx-font-size: 11; -fx-text-fill: rgba(255,255,255,0.6);"/>
+        </VBox>
+    </HBox>
+
+    <!-- ===================== AUJOURD'HUI ===================== -->
+    <HBox spacing="14">
+        <VBox spacing="4" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: #13131f; -fx-background-radius: 12;
+                     -fx-border-color: #2a2a3d; -fx-border-radius: 12; -fx-padding: 16;">
+            <Label text="Aujourd'hui — Présents" style="-fx-font-size: 12; -fx-text-fill: #10b981; -fx-font-weight: bold;"/>
+            <Label fx:id="lblPresentsToday" text="0"
+                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        </VBox>
+        <VBox spacing="4" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: #13131f; -fx-background-radius: 12;
+                     -fx-border-color: #2a2a3d; -fx-border-radius: 12; -fx-padding: 16;">
+            <Label text="Aujourd'hui — Absents" style="-fx-font-size: 12; -fx-text-fill: #ef4444; -fx-font-weight: bold;"/>
+            <Label fx:id="lblAbsentsToday" text="0"
+                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        </VBox>
+        <VBox spacing="4" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: #13131f; -fx-background-radius: 12;
+                     -fx-border-color: #2a2a3d; -fx-border-radius: 12; -fx-padding: 16;">
+            <Label text="Aujourd'hui — Retards" style="-fx-font-size: 12; -fx-text-fill: #f59e0b; -fx-font-weight: bold;"/>
+            <Label fx:id="lblRetardsToday" text="0"
+                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        </VBox>
+    </HBox>
+
+    <!-- ===================== LIGNE 2 : PIE CHART + UPCOMING ===================== -->
+    <HBox spacing="16">
+        <!-- Pie Chart -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: #13131f; -fx-background-radius: 12;
+                     -fx-border-color: #2a2a3d; -fx-border-radius: 12; -fx-padding: 16;">
+            <Label text="📊 Répartition des présences"
+                   style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <PieChart fx:id="piePresence" prefHeight="220" prefWidth="300"
+                      style="-fx-background-color: transparent;"
+                      legendSide="BOTTOM"/>
+        </VBox>
+
+        <!-- Séances à venir -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: #13131f; -fx-background-radius: 12;
+                     -fx-border-color: #2a2a3d; -fx-border-radius: 12; -fx-padding: 16;">
+            <Label text="📅 Prochaines séances &amp; sessions"
+                   style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <ListView fx:id="listUpcoming" prefHeight="220"
+                      style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
+        </VBox>
+    </HBox>
+
+    <!-- ===================== DERNIÈRE ACTIVITÉ ===================== -->
+    <VBox spacing="10"
+          style="-fx-background-color: #13131f; -fx-background-radius: 12;
+                 -fx-border-color: #2a2a3d; -fx-border-radius: 12; -fx-padding: 16;">
+        <Label text="🕐 Dernières activités de présence"
+               style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <ListView fx:id="listRecentActivity" prefHeight="200"
+                  style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
+    </VBox>
+
+</VBox>
+</ScrollPane>
