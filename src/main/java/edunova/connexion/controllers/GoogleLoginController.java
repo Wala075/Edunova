@@ -36,8 +36,12 @@ public class GoogleLoginController {
         // Démarrer le serveur HTTP local
         demarrerServeurLocal();
         
-        // Configuration Google OAuth2
-        String clientId = "506863117414-31gv071h11cj8qr88qio7b924u8j36ii.apps.googleusercontent.com";
+        // Configuration Google OAuth2 - Load from environment
+        String clientId = System.getenv("GOOGLE_CLIENT_ID");
+        if (clientId == null || clientId.isEmpty()) {
+            throw new IllegalStateException("GOOGLE_CLIENT_ID environment variable not set");
+        }
+        
         String redirectUri = "http://localhost:8888/Callback";
         String scope = "openid email profile";
         

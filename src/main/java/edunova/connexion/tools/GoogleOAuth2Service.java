@@ -24,7 +24,7 @@ public class GoogleOAuth2Service {
         if (envId != null && !envId.isEmpty()) {
             return envId;
         }
-        return "506863117414-31gv071h11cj8qr88qio7b924u8j36ii.apps.googleusercontent.com";
+        throw new IllegalStateException("GOOGLE_CLIENT_ID environment variable not set. Please configure .env file.");
     }
     
     private static String getClientSecret() {
@@ -32,7 +32,7 @@ public class GoogleOAuth2Service {
         if (envSecret != null && !envSecret.isEmpty()) {
             return envSecret;
         }
-        return "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";
+        throw new IllegalStateException("GOOGLE_CLIENT_SECRET environment variable not set. Please configure .env file.");
     }
     
     // Port dynamique pour le callback OAuth2

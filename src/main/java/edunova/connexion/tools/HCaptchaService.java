@@ -13,14 +13,14 @@ public class HCaptchaService {
     private static final String SECRET_KEY = getSecretKey();
 
     private static String getSecretKey() {
-        // Try to load from environment variable first
+        // Load from environment variable
         String envKey = System.getenv("HCAPTCHA_SECRET_KEY");
         if (envKey != null && !envKey.isEmpty()) {
             return envKey;
         }
         
-        // Fallback to test key (should be in .env)
-        return "0x0000000000000000000000000000000000000000";
+        // If not set, throw exception to alert developer
+        throw new IllegalStateException("HCAPTCHA_SECRET_KEY environment variable not set. Please configure .env file.");
     }
 
     private static final String VERIFY_URL =
