@@ -30,6 +30,7 @@ public class RiskReportController {
     @FXML private Label lblConnectionAttempts;
     @FXML private Label lblHighRiskConnectionsCount;
     @FXML private VBox highRiskConnectionsPanel;
+    @FXML private VBox failedAttemptsPanel;
 
     private RiskDAO riskDAO = new RiskDAO();
     private Timeline updateTimeline;
@@ -63,6 +64,9 @@ public class RiskReportController {
 
         // Afficher les connexions à risque élevé
         displayHighRiskConnections();
+
+        // Afficher les tentatives échouées par compte
+        displayFailedLoginAttempts();
     }
 
     /**
@@ -140,7 +144,42 @@ public class RiskReportController {
     }
 
     /**
-     * Crée la ligne d'en-tête
+     * Affiche les tentatives de connexion échouées par compte
+     */
+    private void displayFailedLoginAttempts() {
+        if (failedAttemptsPanel == null) {
+            return; // Le panneau n'existe pas dans le FXML
+        }
+
+        List<Map<String, Object>> failedAttempts = riskDAO.getFailedLoginAttemptsByUser(15);
+
+        failedAttemptsPanel.getChildren().clear();
+
+        if (failedAttempts.isEmpty()) {
+            Label noData = new Label("✅ Aucune tentative échouée");
+            noData.setStyle("-fx-text-fill: #16a34a; -fx-font-size: 12; -fx-font-weight: bold;");
+            failedAttemptsPanel.getChildren().add(noData);
+            return;
+        }
+
+        // Ajouter un titre
+        Label title = new Label("📊 Tentatives de Connexion Échouées par Compte");
+        title.setStyle("-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-padding: 10 0 10 0;");
+        failedAttemptsPanel.getChildren().add(title);
+
+        // Ajouter un en-tête
+        HBox header = createFailedAttemptsHeaderRow();
+        failedAttemptsPanel.getChildren().add(header);
+
+        // Ajouter les tentatives échouées
+        for (Map<String, Object> attempt : failedAttempts) {
+            HBox row = createFailedAttemptRow(attempt);
+            failedAttemptsPanel.getChildren().add(row);
+        }
+    }
+
+    /**
+     * Crée la ligne d'en-tête pour les connexions à risque
      */
     private HBox createHeaderRow() {
         HBox header = new HBox(10);
@@ -173,6 +212,31 @@ public class RiskReportController {
         actionLabel.setStyle("-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #64748b; -fx-min-width: 80;");
 
         header.getChildren().addAll(scoreLabel, userLabel, ipLabel, countryLabel, connTimeLabel, typingSpeedLabel, reasonLabel, actionLabel);
+        return header;
+    }
+
+    /**
+     * Crée la ligne d'en-tête pour les tentatives échouées
+     */
+    private HBox createFailedAttemptsHeaderRow() {
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setStyle("-fx-padding: 12; -fx-background-color: #fef2f2; " +
+                "-fx-border-color: #fecaca; -fx-border-width: 0 0 2 0;");
+
+        Label countLabel = new Label("Tentatives");
+        countLabel.setStyle("-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #dc2626; -fx-min-width: 80;");
+
+        Label userLabel = new Label("Utilisateur");
+        userLabel.setStyle("-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #64748b; -fx-min-width: 150;");
+
+        Label emailLabel = new Label("Email");
+        emailLabel.setStyle("-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #64748b; -fx-min-width: 200;");
+
+        Label lastAttemptLabel = new Label("Dernière Tentative");
+        lastAttemptLabel.setStyle("-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #64748b; -fx-min-width: 150;");
+
+        header.getChildren().addAll(countLabel, userLabel, emailLabel, lastAttemptLabel);
         return header;
     }
 
@@ -232,6 +296,43 @@ public class RiskReportController {
                 "-fx-text-fill: " + ("BLOQUÉ".equals(action) ? "#ef4444" : "#16a34a") + "; -fx-min-width: 80;");
 
         row.getChildren().addAll(scoreLabel, userLabel, ipLabel, countryLabel, connTimeLabel, typingSpeedLabel, reasonLabel, actionLabel);
+        return row;
+    }
+
+    /**
+     * Crée une ligne de tentative échouée
+     */
+    private HBox createFailedAttemptRow(Map<String, Object> attempt) {
+        HBox row = new HBox(10);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.setStyle("-fx-padding: 12; -fx-border-color: #fecaca; " +
+                "-fx-border-width: 0 0 1 0; -fx-background-color: #fef2f2;");
+
+        // Nombre de tentatives
+        int failedCount = (Integer) attempt.get("failedCount");
+        Label countLabel = new Label("❌ " + failedCount);
+        countLabel.setStyle("-fx-font-size: 11; -fx-font-weight: bold; " +
+                "-fx-text-fill: " + (failedCount > 5 ? "#dc2626" : "#f97316") + "; -fx-min-width: 80;");
+
+        // Utilisateur
+        String nom = (String) attempt.get("nom");
+        String prenom = (String) attempt.get("prenom");
+        Label userLabel = new Label(prenom + " " + nom);
+        userLabel.setStyle("-fx-font-size: 10; -fx-text-fill: #1e293b; -fx-font-weight: bold; -fx-min-width: 150;");
+
+        // Email
+        String email = (String) attempt.get("email");
+        Label emailLabel = new Label(email);
+        emailLabel.setStyle("-fx-font-size: 10; -fx-text-fill: #64748b; -fx-min-width: 200;");
+
+        // Dernière tentative
+        java.time.LocalDateTime lastAttempt = (java.time.LocalDateTime) attempt.get("lastFailedAttempt");
+        String lastAttemptStr = lastAttempt != null ? 
+            lastAttempt.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : "N/A";
+        Label lastAttemptLabel = new Label(lastAttemptStr);
+        lastAttemptLabel.setStyle("-fx-font-size: 10; -fx-text-fill: #64748b; -fx-min-width: 150;");
+
+        row.getChildren().addAll(countLabel, userLabel, emailLabel, lastAttemptLabel);
         return row;
     }
 

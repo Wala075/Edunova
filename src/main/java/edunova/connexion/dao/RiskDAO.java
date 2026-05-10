@@ -339,4 +339,83 @@ public class RiskDAO {
 
         return connections;
     }
+
+    /**
+     * Récupère les tentatives de connexion échouées par compte
+     */
+    public List<Map<String, Object>> getFailedLoginAttemptsByUser(int limit) {
+        List<Map<String, Object>> failedAttempts = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT " +
+                    "u.id_u, u.email_u, u.nom_u, u.prenom_u, " +
+                    "COUNT(lh.id_lh) as failed_count, " +
+                    "MAX(lh.date_lh) as last_failed_attempt " +
+                    "FROM user u " +
+                    "LEFT JOIN login_history lh ON u.id_u = lh.user_id AND lh.succes_lh = 0 " +
+                    "WHERE lh.id_lh IS NOT NULL " +
+                    "GROUP BY u.id_u, u.email_u, u.nom_u, u.prenom_u " +
+                    "ORDER BY failed_count DESC " +
+                    "LIMIT ?";
+
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, limit);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, Object> attempt = new HashMap<>();
+                attempt.put("userId", rs.getInt("id_u"));
+                attempt.put("email", rs.getString("email_u"));
+                attempt.put("nom", rs.getString("nom_u"));
+                attempt.put("prenom", rs.getString("prenom_u"));
+                attempt.put("failedCount", rs.getInt("failed_count"));
+                attempt.put("lastFailedAttempt", rs.getTimestamp("last_failed_attempt").toLocalDateTime());
+
+                failedAttempts.add(attempt);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lors de la récupération des tentatives échouées: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return failedAttempts;
+    }
+
+    /**
+     * Récupère les détails des tentatives échouées pour un utilisateur spécifique
+     */
+    public List<Map<String, Object>> getFailedLoginDetailsForUser(int userId, int limit) {
+        List<Map<String, Object>> details = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT " +
+                    "lh.id_lh, lh.date_lh, lh.adresse_ip_lh, lh.succes_lh " +
+                    "FROM login_history lh " +
+                    "WHERE lh.user_id = ? AND lh.succes_lh = 0 " +
+                    "ORDER BY lh.date_lh DESC " +
+                    "LIMIT ?";
+
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+            stmt.setInt(2, limit);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, Object> detail = new HashMap<>();
+                detail.put("id", rs.getInt("id_lh"));
+                detail.put("date", rs.getTimestamp("date_lh").toLocalDateTime());
+                detail.put("ipAddress", rs.getString("adresse_ip_lh"));
+                detail.put("success", rs.getInt("succes_lh") == 1);
+
+                details.add(detail);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lors de la récupération des détails: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return details;
+    }
 }

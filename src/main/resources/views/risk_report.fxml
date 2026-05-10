@@ -147,4 +147,24 @@
               style="-fx-background-color: transparent;"/>
     </VBox>
 
+    <!-- Tentatives de Connexion Échouées par Compte -->
+    <VBox spacing="10"
+          style="-fx-background-color: #ffffff;
+                 -fx-background-radius: 10;
+                 -fx-padding: 20;
+                 -fx-border-color: #fecaca;
+                 -fx-border-radius: 10;
+                 -fx-border-width: 1.5;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0, 0, 2);">
+
+        <!-- Titre -->
+        <Label text="❌ Tentatives de Connexion Échouées par Compte"
+               style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #dc2626;"/>
+
+        <!-- Liste des Tentatives Échouées -->
+        <VBox fx:id="failedAttemptsPanel"
+              spacing="0"
+              style="-fx-background-color: transparent;"/>
+    </VBox>
+
 </VBox>
