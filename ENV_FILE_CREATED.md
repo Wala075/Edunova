@@ -21,12 +21,12 @@
 ### `.env`
 ```env
 # Configuration hCaptcha - Clés de test pour développement
-HCAPTCHA_SECRET_KEY=0x0000000000000000000000000000000000000000
-HCAPTCHA_SITE_KEY=10000000-ffff-ffff-ffff-000000000001
+HCAPTCHA_SECRET_KEY=your_hcaptcha_secret_key_here
+HCAPTCHA_SITE_KEY=your_hcaptcha_site_key_here
 
 # Configuration Google OAuth2
-GOOGLE_CLIENT_ID=506863117414-31gv071h11cj8qr88qio7b924u8j36ii.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=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
+GOOGLE_CLIENT_ID=your_google_client_id_here
+GOOGLE_CLIENT_SECRET=your_google_client_secret_here
 ```
 
 ## Security

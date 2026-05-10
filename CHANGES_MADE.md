@@ -179,13 +179,7 @@ The file already contains:
 ## File: config.properties
 
 ### Status: ✅ No Changes Needed
-The file already contains:
-```properties
-hcaptcha.secret.key=0x0000000000000000000000000000000000000000
-hcaptcha.site.key=10000000-ffff-ffff-ffff-000000000001
-google.client.id=506863117414-31gv071h11cj8qr88qio7b924u8j36ii.apps.googleusercontent.com
-google.client.secret=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
-```
+The file already contains configuration keys (actual values stored in `.env` file for security)
 
 ---
 
