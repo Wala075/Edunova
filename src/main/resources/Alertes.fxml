@@ -1,114 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="700.0" prefWidth="1180.0" spacing="22.0"
-      styleClass="app-root" stylesheets="@dashboard.css"
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.Alertes">
-    <padding><Insets bottom="36.0" left="40.0" right="40.0" top="36.0"/></padding>
+<BorderPane prefHeight="780.0" prefWidth="1240.0"
+            styleClass="pro-page-root" stylesheets="@dashboard.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.Alertes">
 
     <!-- Header -->
-    <HBox alignment="CENTER_LEFT" spacing="14.0">
-        <Button onAction="#retour" styleClass="back-btn" text="◀"/>
-        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
-            <Label styleClass="app-title" text="Alertes intelligentes"/>
-            <Label styleClass="app-subtitle" text="Détection automatique des situations à surveiller"/>
-        </VBox>
-        <Button fx:id="btnScan" onAction="#lancerScan" prefHeight="42.0"
-                styleClass="btn-primary" text="✨  Scan intelligent"/>
-    </HBox>
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="pro-page-header">
+            <Button onAction="#retour" styleClass="pro-back-btn" text="◀"/>
+            <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="pro-page-title-big" text="Alertes intelligentes"/>
+                <Label styleClass="pro-page-sub-big"
+                       text="Détection automatique des situations à surveiller"/>
+            </VBox>
+            <Button fx:id="btnScan" onAction="#lancerScan" prefHeight="42"
+                    styleClass="pro-btn-primary" text="✨  Scan intelligent"/>
+        </HBox>
+    </top>
 
-    <!-- Stats cards -->
-    <HBox spacing="14.0">
-        <VBox spacing="4.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
-            <padding><Insets bottom="14.0" left="18.0" right="18.0" top="14.0"/></padding>
-            <Label styleClass="stat-label" text="🔴 Critiques"/>
-            <Label fx:id="lbCritiques" styleClass="stat-value" text="0"/>
-        </VBox>
-        <VBox spacing="4.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
-            <padding><Insets bottom="14.0" left="18.0" right="18.0" top="14.0"/></padding>
-            <Label styleClass="stat-label" text="🟠 Moyennes"/>
-            <Label fx:id="lbMoyennes" styleClass="stat-value" text="0"/>
-        </VBox>
-        <VBox spacing="4.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
-            <padding><Insets bottom="14.0" left="18.0" right="18.0" top="14.0"/></padding>
-            <Label styleClass="stat-label" text="🟢 Positives"/>
-            <Label fx:id="lbPositives" styleClass="stat-value" text="0"/>
-        </VBox>
-        <VBox spacing="4.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
-            <padding><Insets bottom="14.0" left="18.0" right="18.0" top="14.0"/></padding>
-            <Label styleClass="stat-label" text="🔵 Infos"/>
-            <Label fx:id="lbInfos" styleClass="stat-value" text="0"/>
-        </VBox>
-        <VBox spacing="4.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
-            <padding><Insets bottom="14.0" left="18.0" right="18.0" top="14.0"/></padding>
-            <Label styleClass="stat-label" text="🔔 Nouvelles"/>
-            <Label fx:id="lbNouvelles" styleClass="stat-value" text="0"/>
-        </VBox>
-    </HBox>
+    <!-- Content -->
+    <center>
+        <VBox spacing="18" style="-fx-padding: 24 32 0 32; -fx-background-color: #0f0f1e;">
 
-    <!-- Filtres -->
-    <VBox spacing="14.0" styleClass="pastel-purple">
-        <padding><Insets bottom="22.0" left="22.0" right="22.0" top="20.0"/></padding>
-
-        <HBox alignment="CENTER_LEFT" spacing="10.0">
-            <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="card-tag">
-                <Label text="🔍"/>
-                <Label styleClass="card-tag-text" text="Filtres"/>
+            <!-- Stats row -->
+            <HBox spacing="14">
+                <VBox styleClass="pro-stat-card,pro-stat-red" HBox.hgrow="ALWAYS">
+                    <Label styleClass="pro-stat-label" text="🔴 Critiques"/>
+                    <Label fx:id="lbCritiques" styleClass="pro-stat-value,pro-red-text" text="0"/>
+                </VBox>
+                <VBox styleClass="pro-stat-card,pro-stat-violet" HBox.hgrow="ALWAYS">
+                    <Label styleClass="pro-stat-label" text="🟠 Moyennes"/>
+                    <Label fx:id="lbMoyennes" styleClass="pro-stat-value"
+                           style="-fx-text-fill:#f59e0b;" text="0"/>
+                </VBox>
+                <VBox styleClass="pro-stat-card,pro-stat-green" HBox.hgrow="ALWAYS">
+                    <Label styleClass="pro-stat-label" text="🟢 Positives"/>
+                    <Label fx:id="lbPositives" styleClass="pro-stat-value,pro-green-text" text="0"/>
+                </VBox>
+                <VBox styleClass="pro-stat-card,pro-stat-blue" HBox.hgrow="ALWAYS">
+                    <Label styleClass="pro-stat-label" text="🔵 Infos"/>
+                    <Label fx:id="lbInfos" styleClass="pro-stat-value,pro-blue-text" text="0"/>
+                </VBox>
+                <VBox styleClass="pro-stat-card,pro-stat-violet" HBox.hgrow="ALWAYS">
+                    <Label styleClass="pro-stat-label" text="🔔 Nouvelles"/>
+                    <Label fx:id="lbNouvelles" styleClass="pro-stat-value,pro-violet-text" text="0"/>
+                </VBox>
             </HBox>
-        </HBox>
 
-        <HBox alignment="BOTTOM_LEFT" spacing="14.0">
-            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
-                <Label styleClass="label-on-pastel" text="SÉVÉRITÉ"/>
-                <ComboBox fx:id="cbSeverite" maxWidth="1.7976931348623157E308" prefHeight="40.0"
-                          promptText="Toutes" styleClass="combo-pill"/>
+            <!-- Filtres -->
+            <VBox spacing="14" styleClass="pro-card-block">
+                <Label styleClass="pro-block-title" text="🔍  Filtres"/>
+                <HBox alignment="BOTTOM_LEFT" spacing="14">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label styleClass="pro-label" text="SÉVÉRITÉ"/>
+                        <ComboBox fx:id="cbSeverite" maxWidth="1.7976931348623157E308"
+                                  prefHeight="40" promptText="Toutes"
+                                  styleClass="pro-combo"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label styleClass="pro-label" text="STATUT"/>
+                        <ComboBox fx:id="cbStatut" maxWidth="1.7976931348623157E308"
+                                  prefHeight="40" promptText="Tous"
+                                  styleClass="pro-combo"/>
+                    </VBox>
+                    <Button onAction="#filtrer" prefHeight="40"
+                            styleClass="pro-btn-primary" text="🔍  Filtrer"/>
+                    <Button onAction="#reset" prefHeight="40"
+                            styleClass="pro-btn-secondary" text="↻  Reset"/>
+                </HBox>
             </VBox>
-            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
-                <Label styleClass="label-on-pastel" text="STATUT"/>
-                <ComboBox fx:id="cbStatut" maxWidth="1.7976931348623157E308" prefHeight="40.0"
-                          promptText="Tous" styleClass="combo-pill"/>
+
+            <!-- Liste alertes en cards -->
+            <ListView fx:id="lvAlertes" styleClass="pro-cards-list" VBox.vgrow="ALWAYS"/>
+
+            <!-- Détails sélection -->
+            <VBox spacing="6" styleClass="pro-card-block">
+                <Label styleClass="pro-label" text="MESSAGE DÉTAILLÉ"/>
+                <Label fx:id="lbMessage" styleClass="pro-hint" wrapText="true"
+                       text="Sélectionner une alerte pour voir les détails."/>
             </VBox>
-            <Button onAction="#filtrer" prefHeight="40.0" styleClass="btn-primary" text="🔍  Filtrer"/>
-            <Button onAction="#reset" prefHeight="40.0" styleClass="btn-secondary" text="↻  Reset"/>
+        </VBox>
+    </center>
+
+    <!-- Actions footer -->
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10"
+              style="-fx-background-color: #16162e; -fx-padding: 16 32; -fx-border-color: #2d2d4e; -fx-border-width: 1 0 0 0;">
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button onAction="#marquerLue"     styleClass="pro-btn-secondary" text="✓  Marquer lue"/>
+            <Button onAction="#marquerTraitee" styleClass="pro-btn-success"   text="✔  Traitée"/>
+            <Button onAction="#ignorer"        styleClass="pro-btn-secondary" text="✕  Ignorer"/>
+            <Button onAction="#supprimer"      styleClass="pro-btn-danger"    text="🗑  Supprimer"/>
         </HBox>
-    </VBox>
-
-    <!-- Tableau alertes -->
-    <TableView fx:id="tvAlertes" styleClass="app-table" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="colSeverite"  prefWidth="100.0" text="Sévérité"/>
-            <TableColumn fx:id="colType"      prefWidth="160.0" text="Type"/>
-            <TableColumn fx:id="colTitre"     prefWidth="240.0" text="Titre"/>
-            <TableColumn fx:id="colEleve"     prefWidth="170.0" text="Élève"/>
-            <TableColumn fx:id="colMatiere"   prefWidth="120.0" text="Matière"/>
-            <TableColumn fx:id="colDate"      prefWidth="140.0" text="Date"/>
-            <TableColumn fx:id="colStatut"    prefWidth="100.0" text="Statut"/>
-        </columns>
-    </TableView>
-
-    <!-- Détails sélection -->
-    <VBox spacing="6.0" styleClass="pastel-purple">
-        <padding><Insets bottom="14.0" left="18.0" right="18.0" top="14.0"/></padding>
-        <Label styleClass="label-on-pastel" text="MESSAGE"/>
-        <Label fx:id="lbMessage" styleClass="hint" text="Sélectionner une alerte pour voir les détails." wrapText="true"/>
-    </VBox>
-
-    <!-- Actions -->
-    <HBox alignment="CENTER_LEFT" spacing="10.0">
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button onAction="#marquerLue"     styleClass="btn-secondary" text="✓  Marquer lue"/>
-        <Button onAction="#marquerTraitee" styleClass="btn-primary"   text="✔  Traitée"/>
-        <Button onAction="#ignorer"        styleClass="btn-secondary" text="✕  Ignorer"/>
-        <Button onAction="#supprimer"      styleClass="btn-danger"    text="🗑  Supprimer"/>
-    </HBox>
-</VBox>
+    </bottom>
+</BorderPane>

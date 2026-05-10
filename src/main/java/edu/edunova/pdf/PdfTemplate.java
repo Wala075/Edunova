@@ -23,7 +23,16 @@ public class PdfTemplate {
 
     private PdfTemplate() {}
 
+    /** Compatibilité ascendante (sans version arabe). */
     public static String bulletinXhtml(Bulletin b, String appreciationIA) {
+        return bulletinXhtml(b, appreciationIA, null);
+    }
+
+    /**
+     * Génère le bulletin XHTML pour OpenHTMLtoPDF.
+     * Si appreciationAr est non-null, affiche les deux versions (FR + AR) côte à côte.
+     */
+    public static String bulletinXhtml(Bulletin b, String appreciationIA, String appreciationAr) {
         Student s = b.getStudent();
         String studentName = s == null ? "—" : esc(s.getNomComplet().trim());
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -43,13 +52,47 @@ public class PdfTemplate {
             }
         }
 
+        boolean hasFr = appreciationIA != null && !appreciationIA.isBlank();
+        boolean hasAr = appreciationAr != null && !appreciationAr.isBlank();
+
         StringBuilder ap = new StringBuilder();
-        if (appreciationIA != null && !appreciationIA.isBlank()) {
+        if (hasFr && hasAr) {
+            // Mode bilingue : 2 colonnes côte à côte
+            ap.append("<table class='bilingue-table'><tr>")
+              // Colonne FR
+              .append("<td class='bilingue-fr'>")
+                  .append("<div class='appreciation'>")
+                      .append("<div class='appreciation-title'>")
+                          .append("APPRÉCIATION DU PROFESSEUR PRINCIPAL")
+                      .append("</div>")
+                      .append("<p>").append(esc(appreciationIA)).append("</p>")
+                  .append("</div>")
+              .append("</td>")
+              // Colonne AR
+              .append("<td class='bilingue-ar'>")
+                  .append("<div class='appreciation appreciation-ar' dir='rtl'>")
+                      .append("<div class='appreciation-title appreciation-title-ar'>")
+                          .append("ملاحظة المعلم الرئيسي")
+                      .append("</div>")
+                      .append("<p dir='rtl'>").append(esc(appreciationAr)).append("</p>")
+                  .append("</div>")
+              .append("</td>")
+              .append("</tr></table>");
+        } else if (hasFr) {
+            // Mode FR seul (comportement existant)
             ap.append("<div class='appreciation'>")
               .append("<div class='appreciation-title'>")
                   .append("APPRÉCIATION DU PROFESSEUR PRINCIPAL")
               .append("</div>")
               .append("<p>").append(esc(appreciationIA)).append("</p>")
+              .append("</div>");
+        } else if (hasAr) {
+            // Mode AR seul
+            ap.append("<div class='appreciation appreciation-ar' dir='rtl'>")
+              .append("<div class='appreciation-title appreciation-title-ar'>")
+                  .append("ملاحظة المعلم الرئيسي")
+              .append("</div>")
+              .append("<p dir='rtl'>").append(esc(appreciationAr)).append("</p>")
               .append("</div>");
         }
 
@@ -158,6 +201,16 @@ public class PdfTemplate {
             + ".appreciation { background: #faf5ff; border-left: 3px solid " + COLOR_PRIMARY + "; padding: 12px 16px; margin-bottom: 18px; }"
             + ".appreciation-title { font-size: 9pt; color: " + COLOR_PRIMARY + "; font-weight: bold; margin-bottom: 6px; }"
             + ".appreciation p { margin: 0; line-height: 1.5; font-size: 10pt; }"
+
+            // Layout bilingue (FR + AR côte à côte)
+            + ".bilingue-table { width: 100%; border-collapse: separate; border-spacing: 8px 0; margin-bottom: 18px; }"
+            + ".bilingue-fr, .bilingue-ar { width: 50%; vertical-align: top; }"
+            + ".bilingue-fr .appreciation, .bilingue-ar .appreciation { margin-bottom: 0; }"
+            // Style spécifique arabe
+            + ".appreciation-ar { border-left: none; border-right: 3px solid " + COLOR_PRIMARY + "; text-align: right; }"
+            + ".appreciation-ar p { direction: rtl; text-align: right; font-size: 11pt; line-height: 1.7; "
+            + "font-family: 'ArabicFont', 'Tahoma', sans-serif; }"
+            + ".appreciation-title-ar { text-align: right; font-family: 'ArabicFont', 'Tahoma', sans-serif; }"
 
             + ".decision { font-size: 11pt; padding: 8px 0; }"
 

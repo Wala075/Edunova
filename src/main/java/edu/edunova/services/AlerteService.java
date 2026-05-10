@@ -32,7 +32,9 @@ public class AlerteService {
             pst.setString(2, a.getSeverite()   != null ? a.getSeverite().name()   : Severite.INFO.name());
             pst.setString(3, a.getTitre());
             pst.setString(4, a.getMessage());
-            pst.setInt   (5, a.getStudentId());
+            // student_id : NULL pour les alertes globales (studentId <= 0)
+            if (a.getStudentId() > 0) pst.setInt(5, a.getStudentId());
+            else                      pst.setNull(5, Types.INTEGER);
             if (a.getMatiereId() != null) pst.setInt(6, a.getMatiereId()); else pst.setNull(6, Types.INTEGER);
             if (a.getTrimestre() != null) pst.setInt(7, a.getTrimestre()); else pst.setNull(7, Types.INTEGER);
             pst.setString(8, a.getAnneeScolaire());
@@ -65,8 +67,11 @@ public class AlerteService {
 
     public boolean existsSimilar(Alerte a) {
         StringBuilder sb = new StringBuilder(
-                "SELECT 1 FROM alerte WHERE type_alerte = ? AND student_id = ? " +
+                "SELECT 1 FROM alerte WHERE type_alerte = ? " +
                         "AND IFNULL(annee_scolaire,'') = IFNULL(?, '')");
+        // student_id : NULL si alerte globale
+        if (a.getStudentId() > 0) sb.append(" AND student_id = ?");
+        else sb.append(" AND student_id IS NULL");
         if (a.getMatiereId() != null) sb.append(" AND matiere_id = ?");
         else sb.append(" AND matiere_id IS NULL");
         if (a.getTrimestre() != null) sb.append(" AND trimestre = ?");
@@ -76,8 +81,8 @@ public class AlerteService {
         try (PreparedStatement pst = cnx.prepareStatement(sb.toString())) {
             int idx = 1;
             pst.setString(idx++, a.getTypeAlerte().name());
-            pst.setInt   (idx++, a.getStudentId());
             pst.setString(idx++, a.getAnneeScolaire());
+            if (a.getStudentId() > 0) pst.setInt(idx++, a.getStudentId());
             if (a.getMatiereId() != null) pst.setInt(idx++, a.getMatiereId());
             if (a.getTrimestre() != null) pst.setInt(idx++, a.getTrimestre());
 

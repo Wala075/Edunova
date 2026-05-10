@@ -1,74 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="700.0" prefWidth="1120.0" spacing="22.0"
-      styleClass="app-root" stylesheets="@dashboard.css"
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.ListeNotes">
-    <padding><Insets bottom="36.0" left="40.0" right="40.0" top="36.0"/></padding>
+<BorderPane prefHeight="700.0" prefWidth="1180.0"
+            styleClass="pro-page-root" stylesheets="@dashboard.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.ListeNotes">
 
     <!-- Header -->
-    <HBox alignment="CENTER_LEFT" spacing="14.0">
-        <Button onAction="#retour" styleClass="back-btn" text="◀"/>
-        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
-            <Label styleClass="app-title" text="Liste des notes"/>
-            <Label styleClass="app-subtitle" text="Rechercher, modifier ou supprimer une évaluation"/>
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="pro-page-header">
+            <Button onAction="#retour" styleClass="pro-back-btn" text="◀"/>
+            <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="pro-page-title-big" text="Liste des notes"/>
+                <Label styleClass="pro-page-sub-big"
+                       text="Rechercher, modifier ou supprimer une évaluation"/>
+            </VBox>
+            <Label fx:id="lbCounter" styleClass="pro-pill" text="0 note(s)"/>
+        </HBox>
+    </top>
+
+    <!-- Content -->
+    <center>
+        <VBox spacing="18" style="-fx-padding: 24 32 0 32; -fx-background-color: #0f0f1e;">
+
+            <!-- Filtres card -->
+            <VBox spacing="14" styleClass="pro-card-block">
+                <Label styleClass="pro-block-title" text="🔍  Filtres de recherche"/>
+
+                <HBox alignment="BOTTOM_LEFT" spacing="14">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label styleClass="pro-label" text="ÉLÈVE"/>
+                        <ComboBox fx:id="cbEleve" maxWidth="1.7976931348623157E308"
+                                  prefHeight="40" promptText="Tous les élèves"
+                                  styleClass="pro-combo"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label styleClass="pro-label" text="MATIÈRE"/>
+                        <ComboBox fx:id="cbMatiere" maxWidth="1.7976931348623157E308"
+                                  prefHeight="40" promptText="Toutes les matières"
+                                  styleClass="pro-combo"/>
+                    </VBox>
+                    <Button onAction="#rechercher" prefHeight="40"
+                            styleClass="pro-btn-primary" text="🔍  Rechercher"/>
+                    <Button onAction="#reset" prefHeight="40"
+                            styleClass="pro-btn-secondary" text="↻  Reset"/>
+                </HBox>
+            </VBox>
+
+            <!-- Liste de cartes -->
+            <ListView fx:id="lvNotes" styleClass="pro-cards-list" VBox.vgrow="ALWAYS"/>
         </VBox>
-    </HBox>
+    </center>
 
-    <!-- Purple pastel filter card -->
-    <VBox spacing="14.0" styleClass="pastel-purple">
-        <padding><Insets bottom="22.0" left="22.0" right="22.0" top="20.0"/></padding>
-
-        <HBox alignment="CENTER_LEFT" spacing="10.0">
-            <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="card-tag">
-                <Label text="🔍"/>
-                <Label styleClass="card-tag-text" text="Filtres de recherche"/>
-            </HBox>
+    <!-- Actions footer -->
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10"
+              style="-fx-background-color: #16162e; -fx-padding: 16 32; -fx-border-color: #2d2d4e; -fx-border-width: 1 0 0 0;">
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button onAction="#supprimer" styleClass="pro-btn-danger" text="🗑  Supprimer"/>
+            <Button onAction="#modifier" styleClass="pro-btn-primary" text="✏  Modifier"/>
         </HBox>
-
-        <HBox alignment="BOTTOM_LEFT" spacing="14.0">
-            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
-                <Label styleClass="label-on-pastel" text="ÉLÈVE"/>
-                <ComboBox fx:id="cbEleve" maxWidth="1.7976931348623157E308" prefHeight="40.0"
-                          promptText="Tous les élèves" styleClass="combo-pill"/>
-            </VBox>
-            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
-                <Label styleClass="label-on-pastel" text="MATIÈRE"/>
-                <ComboBox fx:id="cbMatiere" maxWidth="1.7976931348623157E308" prefHeight="40.0"
-                          promptText="Toutes les matières" styleClass="combo-pill"/>
-            </VBox>
-            <Button onAction="#rechercher" prefHeight="40.0" styleClass="btn-primary" text="🔍  Rechercher"/>
-            <Button onAction="#reset" prefHeight="40.0" styleClass="btn-secondary" text="↻  Reset"/>
-        </HBox>
-    </VBox>
-
-    <!-- Table -->
-    <TableView fx:id="tvNotes" styleClass="app-table" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="colEleve" prefWidth="190.0" text="Élève"/>
-            <TableColumn fx:id="colMatiere" prefWidth="150.0" text="Matière"/>
-            <TableColumn fx:id="colValeur" prefWidth="80.0" text="Note"/>
-            <TableColumn fx:id="colCoef" prefWidth="60.0" text="Coef"/>
-            <TableColumn fx:id="colType" prefWidth="120.0" text="Type"/>
-            <TableColumn fx:id="colTrimestre" prefWidth="90.0" text="Trim."/>
-            <TableColumn fx:id="colDate" prefWidth="130.0" text="Date"/>
-        </columns>
-    </TableView>
-
-    <!-- Actions -->
-    <HBox alignment="CENTER_LEFT" spacing="10.0">
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button onAction="#supprimer" styleClass="btn-danger" text="🗑  Supprimer"/>
-        <Button onAction="#modifier" styleClass="btn-primary" text="✏  Modifier"/>
-    </HBox>
-</VBox>
+    </bottom>
+</BorderPane>

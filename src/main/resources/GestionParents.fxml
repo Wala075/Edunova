@@ -1,53 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="640.0" prefWidth="980.0" spacing="20.0"
-      styleClass="app-root" stylesheets="@dashboard.css"
-      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.GestionParents">
-    <padding><Insets bottom="32.0" left="36.0" right="36.0" top="32.0"/></padding>
+<BorderPane prefHeight="700.0" prefWidth="1080.0"
+            styleClass="pro-page-root" stylesheets="@dashboard.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.GestionParents">
 
     <!-- Header -->
-    <HBox alignment="CENTER_LEFT" spacing="14.0">
-        <Button onAction="#retour" styleClass="back-btn" text="◀"/>
-        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
-            <Label styleClass="app-title" text="Coordonnées des parents"/>
-            <Label styleClass="app-subtitle"
-                   text="Email et téléphone utilisés pour les notifications automatiques"/>
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="pro-page-header">
+            <Button onAction="#retour" styleClass="pro-back-btn" text="◀"/>
+            <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                <Label styleClass="pro-page-title-big" text="Coordonnées des parents"/>
+                <Label styleClass="pro-page-sub-big"
+                       text="Email et téléphone utilisés pour les notifications automatiques"/>
+            </VBox>
+            <Label fx:id="lbCompteur" styleClass="pro-pill" text="0 élève(s)"/>
+        </HBox>
+    </top>
+
+    <!-- Content -->
+    <center>
+        <VBox spacing="18" style="-fx-padding: 24 32 0 32; -fx-background-color: #0f0f1e;">
+
+            <!-- Info card -->
+            <VBox spacing="6" styleClass="pro-card-block">
+                <Label styleClass="pro-block-title" text="✏  Édition rapide"/>
+                <Label styleClass="pro-hint"
+                       text="Tape directement dans les champs email/téléphone, puis Enregistrer ↓"/>
+            </VBox>
+
+            <!-- Liste de cartes éditables -->
+            <ListView fx:id="lvEleves" styleClass="pro-cards-list" VBox.vgrow="ALWAYS"/>
         </VBox>
-        <Label fx:id="lbCompteur" styleClass="hint" text="0 élève(s)"/>
-    </HBox>
-
-    <!-- Info -->
-    <VBox spacing="6.0" styleClass="pastel-purple">
-        <padding><Insets bottom="12.0" left="18.0" right="18.0" top="10.0"/></padding>
-        <Label styleClass="card-tag-text"
-               text="✏  Double-clic sur une cellule pour éditer  ·  Entrée pour valider  ·  bouton Enregistrer ↓"/>
-    </VBox>
-
-    <!-- Table -->
-    <TableView fx:id="tvEleves" editable="true" styleClass="app-table" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="colNom"      prefWidth="180.0" text="Nom"/>
-            <TableColumn fx:id="colPrenom"   prefWidth="180.0" text="Prénom"/>
-            <TableColumn fx:id="colEmail"    prefWidth="280.0" text="Email parent (✏)"/>
-            <TableColumn fx:id="colTel"      prefWidth="180.0" text="Téléphone parent (✏)"/>
-        </columns>
-    </TableView>
+    </center>
 
     <!-- Footer -->
-    <HBox alignment="CENTER_LEFT" spacing="10.0">
-        <Label fx:id="lbStatus" styleClass="hint" text=""/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button onAction="#actualiser" styleClass="btn-secondary" text="↻  Actualiser"/>
-        <Button onAction="#enregistrer" styleClass="btn-primary" text="💾  Enregistrer"/>
-    </HBox>
-</VBox>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10"
+              style="-fx-background-color: #16162e; -fx-padding: 16 32; -fx-border-color: #2d2d4e; -fx-border-width: 1 0 0 0;">
+            <Label fx:id="lbStatus" styleClass="pro-hint" text=""/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button onAction="#actualiser" styleClass="pro-btn-secondary" text="↻  Actualiser"/>
+            <Button onAction="#enregistrer" styleClass="pro-btn-primary" text="💾  Enregistrer"/>
+        </HBox>
+    </bottom>
+</BorderPane>

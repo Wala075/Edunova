@@ -1,8 +1,10 @@
 package controllers;
 
+import edu.edunova.ai.DeepLService;
 import edu.edunova.ai.GeminiService;
 import edu.edunova.entities.Bulletin.BulletinLigne;
 import edu.edunova.entities.Student;
+import edu.edunova.utils.AnneeScolaire;
 import edu.edunova.notifications.BrevoService;
 import edu.edunova.notifications.BrevoService.SendResult;
 import edu.edunova.notifications.EmailLogService;
@@ -44,6 +46,7 @@ public class Bulletin {
 
     // ===== Appréciation IA (Feature 2) =====
     @FXML private TextArea taAppreciationIA;
+    @FXML private Button btnReformuler;
     @FXML private Button btnGenererIA;
     @FXML private Button btnRegenerer;
     @FXML private ProgressIndicator aiSpinner;
@@ -54,6 +57,13 @@ public class Bulletin {
     // ===== PDF =====
     @FXML private Button btnImprimerPdf;
 
+    // ===== Version Arabe (DeepL) =====
+    @FXML private javafx.scene.layout.VBox boxArabe;
+    @FXML private TextArea taAppreciationAr;
+    @FXML private Button btnTraduireAr;
+    @FXML private Button btnRetraduireAr;
+    @FXML private ProgressIndicator arSpinner;
+
     private edu.edunova.entities.Bulletin currentBulletin;
     private final Map<String, Integer> elevesMap = new HashMap<>();
 
@@ -62,6 +72,13 @@ public class Bulletin {
         // Trimestres
         cbTrimestre.getItems().addAll("1", "2", "3");
         cbTrimestre.setValue("1");
+
+        // Année scolaire automatique (verrouillée)
+        tfAnnee.setText(AnneeScolaire.current());
+        tfAnnee.setEditable(false);
+        tfAnnee.setFocusTraversable(false);
+        tfAnnee.setStyle(tfAnnee.getStyle() + " -fx-opacity: 0.85;");
+        tfAnnee.setTooltip(new Tooltip("Année scolaire courante (calculée automatiquement)"));
 
         // Charger élèves
         StudentService ss = new StudentService();
@@ -193,6 +210,22 @@ public class Bulletin {
             btnGenererIA.setManaged(false);
             btnRegenerer.setVisible(true);
             btnRegenerer.setManaged(true);
+
+            // Affiche la card Version arabe (DeepL) - prête à traduire
+            if (boxArabe != null) {
+                boxArabe.setVisible(true);
+                boxArabe.setManaged(true);
+            }
+            // Reset éventuelle ancienne traduction
+            if (taAppreciationAr != null) taAppreciationAr.clear();
+            if (btnTraduireAr != null) {
+                btnTraduireAr.setVisible(true);
+                btnTraduireAr.setManaged(true);
+            }
+            if (btnRetraduireAr != null) {
+                btnRetraduireAr.setVisible(false);
+                btnRetraduireAr.setManaged(false);
+            }
         });
 
         task.setOnFailed(e -> {
@@ -207,6 +240,81 @@ public class Bulletin {
         });
 
         Thread t = new Thread(task, "Gemini-AI");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    // ============================================================
+    // FEATURE 2 BIS - REFORMULER UN TEXTE UTILISATEUR (Gemini)
+    // ============================================================
+    @FXML
+    public void reformulerAppreciation(ActionEvent event) {
+        if (currentBulletin == null || currentBulletin.getStudent() == null) {
+            showAlert(Alert.AlertType.WARNING, "Bulletin manquant",
+                    "Génère d'abord un bulletin avant de reformuler.");
+            return;
+        }
+        String texteUtilisateur = taAppreciationIA == null ? "" : taAppreciationIA.getText();
+        if (texteUtilisateur == null || texteUtilisateur.isBlank()) {
+            showAlert(Alert.AlertType.WARNING, "Texte vide",
+                    "Tape d'abord ton appréciation dans la zone de texte, " +
+                    "puis clique sur 'Améliorer mon texte'.");
+            return;
+        }
+
+        // UI feedback
+        aiSpinner.setVisible(true);
+        if (btnReformuler != null) btnReformuler.setDisable(true);
+        if (btnGenererIA != null)  btnGenererIA.setDisable(true);
+        if (btnRegenerer != null)  btnRegenerer.setDisable(true);
+
+        final edu.edunova.entities.Bulletin snapshot = currentBulletin;
+        final String original = texteUtilisateur;
+
+        Task<String> task = new Task<>() {
+            @Override
+            protected String call() throws Exception {
+                return new GeminiService().reformulerAppreciation(snapshot, original);
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            String improved = task.getValue();
+            taAppreciationIA.setText(improved);
+            aiSpinner.setVisible(false);
+            if (btnReformuler != null) btnReformuler.setDisable(false);
+            if (btnGenererIA != null)  btnGenererIA.setDisable(false);
+            if (btnRegenerer != null)  btnRegenerer.setDisable(false);
+
+            // Affiche la card Version arabe (peut traduire le texte amélioré)
+            if (boxArabe != null) {
+                boxArabe.setVisible(true);
+                boxArabe.setManaged(true);
+            }
+            // Reset traduction arabe (texte FR a changé)
+            if (taAppreciationAr != null) taAppreciationAr.clear();
+            if (btnTraduireAr != null) {
+                btnTraduireAr.setVisible(true);
+                btnTraduireAr.setManaged(true);
+            }
+            if (btnRetraduireAr != null) {
+                btnRetraduireAr.setVisible(false);
+                btnRetraduireAr.setManaged(false);
+            }
+        });
+
+        task.setOnFailed(e -> {
+            aiSpinner.setVisible(false);
+            if (btnReformuler != null) btnReformuler.setDisable(false);
+            if (btnGenererIA != null)  btnGenererIA.setDisable(false);
+            if (btnRegenerer != null)  btnRegenerer.setDisable(false);
+            Throwable ex = task.getException();
+            String msg = ex == null ? "Erreur inconnue" : ex.getMessage();
+            showAlert(Alert.AlertType.ERROR, "Erreur reformulation",
+                    "Impossible de reformuler :\n" + msg);
+        });
+
+        Thread t = new Thread(task, "Gemini-Reformulate");
         t.setDaemon(true);
         t.start();
     }
@@ -248,12 +356,14 @@ public class Bulletin {
 
         final java.io.File dest = destination;
         final edu.edunova.entities.Bulletin snapshot = currentBulletin;
-        final String appreciation = (taAppreciationIA == null) ? null : taAppreciationIA.getText();
+        final String appreciationFr = (taAppreciationIA == null) ? null : taAppreciationIA.getText();
+        final String appreciationAr = (taAppreciationAr == null) ? null : taAppreciationAr.getText();
 
         Task<java.io.File> task = new Task<>() {
             @Override
             protected java.io.File call() throws Exception {
-                return new PdfService().genererBulletinPdf(snapshot, appreciation, dest);
+                return new PdfService().genererBulletinPdf(snapshot, appreciationFr,
+                        appreciationAr, dest);
             }
         };
 
@@ -312,45 +422,22 @@ public class Bulletin {
             return;
         }
 
-        // 1. Récupérer email parent (depuis Student ou demander à l'utilisateur)
+        // 1. Récupérer email parent (depuis Student) - AUTO, sans dialog
         Student student = currentBulletin.getStudent();
         StudentService studentService = new StudentService();
         Student fresh = studentService.findById(student.getId_s());
         String emailParent = (fresh != null) ? fresh.getEmail_parent() : null;
 
+        // Si pas d'email pour cet élève -> erreur + redirige vers Coordonnées parents
         if (emailParent == null || emailParent.isBlank()) {
-            // Pas d'email enregistré pour cet élève -> proposer 2 options
-            Alert noMail = new Alert(Alert.AlertType.WARNING,
+            showAlert(Alert.AlertType.ERROR,
+                    "📭  Email parent manquant",
                     "Aucun email parent enregistré pour " + student.getNomComplet().trim() +
-                    ".\n\nUtilise la page « Coordonnées parents » (sidebar) " +
-                    "pour configurer les emails de tous les élèves.\n\n" +
-                    "Veux-tu saisir l'email maintenant pour cet envoi uniquement ?",
-                    ButtonType.OK, ButtonType.CANCEL);
-            noMail.setTitle("Email parent manquant");
-            noMail.setHeaderText("📭  Pas d'email pour cet élève");
-            if (noMail.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
-
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Email du parent");
-            dialog.setHeaderText("Email parent de " + student.getNomComplet().trim());
-            dialog.setContentText("Email :");
-            java.util.Optional<String> result = dialog.showAndWait();
-            if (!result.isPresent() || result.get().isBlank()) return;
-            emailParent = result.get().trim();
-
-            // Sauvegarder pour les prochaines fois
-            studentService.updateEmailParent(student.getId_s(), emailParent);
+                    ".\n\nVa dans le menu « 👨‍👩‍👧 Coordonnées parents » du Dashboard " +
+                    "pour configurer l'email avant d'envoyer le bulletin.");
+            return;
         }
-
-        // 2. Confirmation
-        Alert conf = new Alert(Alert.AlertType.CONFIRMATION,
-                "Le bulletin va être envoyé à :\n\n📧  " + emailParent +
-                "\n\n(parent de " + student.getNomComplet().trim() + ")",
-                ButtonType.OK, ButtonType.CANCEL);
-        conf.setTitle("Envoyer aux parents");
-        conf.setHeaderText("Bulletin trimestriel - T" + currentBulletin.getTrimestre());
-        java.util.Optional<ButtonType> ok = conf.showAndWait();
-        if (!ok.isPresent() || ok.get() != ButtonType.OK) return;
+        // ENVOI AUTOMATIQUE - pas de confirmation
 
         // 3. Envoi async
         btnEnvoyerParents.setDisable(true);
@@ -396,6 +483,67 @@ public class Bulletin {
         });
 
         Thread t = new Thread(task, "Brevo-Email");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    // ============================================================
+    // TRADUCTION ARABE (DeepL)
+    // ============================================================
+    @FXML
+    public void traduireEnArabe(ActionEvent event) {
+        if (taAppreciationIA == null
+                || taAppreciationIA.getText() == null
+                || taAppreciationIA.getText().isBlank()) {
+            showAlert(Alert.AlertType.WARNING, "Appréciation manquante",
+                    "Génère d'abord une appréciation IA avant de la traduire.");
+            return;
+        }
+
+        // UI feedback
+        if (arSpinner != null) arSpinner.setVisible(true);
+        if (btnTraduireAr != null) btnTraduireAr.setDisable(true);
+        if (btnRetraduireAr != null) btnRetraduireAr.setDisable(true);
+        if (taAppreciationAr != null) taAppreciationAr.setText("جاري الترجمة...");
+
+        final String texteFr = taAppreciationIA.getText();
+
+        Task<String> task = new Task<>() {
+            @Override
+            protected String call() throws Exception {
+                return new DeepLService().traduireEnArabe(texteFr);
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            String txt = task.getValue();
+            if (taAppreciationAr != null) taAppreciationAr.setText(txt);
+            if (arSpinner != null) arSpinner.setVisible(false);
+            if (btnTraduireAr != null) btnTraduireAr.setDisable(false);
+            if (btnRetraduireAr != null) btnRetraduireAr.setDisable(false);
+            // Bascule vers "Retraduire"
+            if (btnTraduireAr != null) {
+                btnTraduireAr.setVisible(false);
+                btnTraduireAr.setManaged(false);
+            }
+            if (btnRetraduireAr != null) {
+                btnRetraduireAr.setVisible(true);
+                btnRetraduireAr.setManaged(true);
+            }
+        });
+
+        task.setOnFailed(e -> {
+            if (arSpinner != null) arSpinner.setVisible(false);
+            if (btnTraduireAr != null) btnTraduireAr.setDisable(false);
+            if (btnRetraduireAr != null) btnRetraduireAr.setDisable(false);
+            if (taAppreciationAr != null) taAppreciationAr.clear();
+            Throwable ex = task.getException();
+            String msg = ex == null ? "Erreur inconnue" : ex.getMessage();
+            showAlert(Alert.AlertType.ERROR, "Erreur DeepL",
+                    "Impossible de traduire :\n" + msg);
+        });
+
+        Thread t = new Thread(task, "DeepL-Translate");
         t.setDaemon(true);
         t.start();
     }

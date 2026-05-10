@@ -5,6 +5,7 @@ import edu.edunova.services.AlerteService;
 import edu.edunova.services.MatiereService;
 import edu.edunova.services.NoteService;
 import edu.edunova.services.StudentService;
+import edu.edunova.utils.AnneeScolaire;
 import edu.edunova.utils.MyConnection;
 
 import javafx.animation.Animation;
@@ -374,11 +375,7 @@ public class Dashboard {
     // ============================================================
 
     private String currentAnneeScolaire() {
-        LocalDate now = LocalDate.now();
-        int year = now.getYear();
-        int month = now.getMonthValue();
-        if (month >= 9) return year + "-" + (year + 1);
-        return (year - 1) + "-" + year;
+        return AnneeScolaire.current();
     }
 
     private String initialesFrom(String name) {

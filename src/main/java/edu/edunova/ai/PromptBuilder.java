@@ -16,6 +16,60 @@ public class PromptBuilder {
     private PromptBuilder() {}
 
     /**
+     * Prompt de REFORMULATION : prend le texte brut écrit par le professeur
+     * et le rend professionnel, corrige les fautes, et garde le sens original.
+     *
+     * Le contexte du bulletin est utilisé pour cohérence (ex: ne pas dire
+     * "élève excellent" si la moyenne est 6/20).
+     */
+    public static String buildReformulation(Bulletin b, String texteUtilisateur) {
+        StringBuilder sb = new StringBuilder(1500);
+
+        sb.append("Tu es Madame Laurent, professeure principale depuis 20 ans dans un établissement ")
+          .append("réputé. Un collègue te confie un brouillon d'appréciation pour le bulletin d'un élève. ")
+          .append("Ton rôle : RÉÉCRIRE ce texte en gardant fidèlement le sens et l'intention, ")
+          .append("mais en l'élevant au niveau d'une appréciation pédagogique professionnelle.\n\n");
+
+        sb.append("OBJECTIFS PRÉCIS :\n");
+        sb.append("1. Corriger toutes les fautes d'orthographe, de grammaire, d'accord et de conjugaison.\n");
+        sb.append("2. Améliorer la syntaxe et le style (transitions, ponctuation, fluidité).\n");
+        sb.append("3. Élever le niveau de langue (vocabulaire pédagogique précis, registre soutenu).\n");
+        sb.append("4. Garder LE MÊME SENS et LE MÊME JUGEMENT que le texte d'origine.\n");
+        sb.append("5. Ne PAS ajouter d'informations qui ne sont pas dans le texte d'origine ou les données.\n");
+        sb.append("6. Ne PAS contredire le texte original (s'il dit positif, reste positif).\n\n");
+
+        sb.append("CONTRAINTES DE FORMAT :\n");
+        sb.append("- Un seul paragraphe fluide (3 à 6 phrases)\n");
+        sb.append("- 60 à 130 mots\n");
+        sb.append("- Pas de markdown, pas de listes, pas de titres\n");
+        sb.append("- Pas de guillemets autour de la réponse\n");
+        sb.append("- Pas de signature, pas de date\n");
+        sb.append("- Utilise le prénom de l'élève une fois maximum\n\n");
+
+        // Profil pour cohérence
+        Profil profil = analyser(b);
+        sb.append("CONTEXTE DU BULLETIN (pour cohérence factuelle uniquement) :\n");
+        if (b.getStudent() != null) {
+            sb.append("- Élève : ").append(nullSafe(b.getStudent().getPrenom_s()))
+              .append(" ").append(nullSafe(b.getStudent().getNom_s())).append("\n");
+        }
+        sb.append("- Trimestre : ").append(b.getTrimestre()).append("\n");
+        sb.append("- Moyenne générale : ").append(String.format("%.2f", b.getMoyenneGenerale())).append("/20\n");
+        sb.append("- Profil pédagogique détecté : ").append(profil.label).append("\n");
+        sb.append("- Matières fortes : ").append(profil.matieresFortes).append("\n");
+        sb.append("- Matières fragiles : ").append(profil.matieresFragiles).append("\n\n");
+
+        sb.append("TEXTE BROUILLON À REFORMULER (entre les guillemets ci-dessous) :\n");
+        sb.append("\"\"\"\n");
+        sb.append(texteUtilisateur == null ? "" : texteUtilisateur.trim());
+        sb.append("\n\"\"\"\n\n");
+
+        sb.append("Réponds UNIQUEMENT avec la version reformulée du texte, sans préambule, ");
+        sb.append("sans guillemets, sans explication. Juste le paragraphe final, prêt à coller dans le bulletin.");
+        return sb.toString();
+    }
+
+    /**
      * Prompt PRO pour appréciation de bulletin scolaire.
      *
      * Construit une instruction détaillée qui force Gemini à produire

@@ -103,10 +103,20 @@ public class BrevoService {
 
         try (Response resp = http.newCall(req).execute()) {
             String raw = resp.body() == null ? "" : resp.body().string();
+
+            // Log console pour debug (utile quand le mail n'arrive pas)
+            System.out.println("[Brevo] HTTP " + resp.code() + " | to=" + toEmail
+                    + " | from=" + senderEmail + " | response=" + raw);
+
             if (!resp.isSuccessful()) {
-                return SendResult.ko("HTTP " + resp.code() + " : " + extractError(raw));
+                String err = extractError(raw);
+                // Hint utile pour le bug le plus fréquent en trial
+                if (resp.code() == 400 && err.toLowerCase().contains("sender")) {
+                    err += "\n\n💡 ASTUCE : ton BREVO_SENDER_EMAIL doit être vérifié dans Brevo. " +
+                           "Va sur Brevo → Settings → Senders & IP → Add a sender → vérifie l'email.";
+                }
+                return SendResult.ko("HTTP " + resp.code() + " : " + err);
             }
-            // Réponse contient { "messageId": "<...>" }
             String msgId = "";
             try {
                 JsonObject json = JsonParser.parseString(raw).getAsJsonObject();

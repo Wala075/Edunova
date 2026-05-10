@@ -3,13 +3,16 @@ package controllers;
 import edu.edunova.entities.Student;
 import edu.edunova.services.StudentService;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
@@ -19,62 +22,25 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Page de gestion des coordonnées parents (email + téléphone).
- * Utilisée pour configurer rapidement les destinataires Brevo (F3) et Twilio (F4).
+ * Page de gestion des coordonnées parents en cards éditables.
  */
 public class GestionParents {
 
-    @FXML private TableView<Student> tvEleves;
-    @FXML private TableColumn<Student, String> colNom;
-    @FXML private TableColumn<Student, String> colPrenom;
-    @FXML private TableColumn<Student, String> colEmail;
-    @FXML private TableColumn<Student, String> colTel;
-
+    @FXML private ListView<Student> lvEleves;
     @FXML private Label lbCompteur;
     @FXML private Label lbStatus;
 
     private final StudentService service = new StudentService();
     private final ObservableList<Student> data = FXCollections.observableArrayList();
 
-    /** IDs des élèves modifiés depuis le dernier save (pour ne pas tout réécrire). */
     private final Set<Integer> dirty = new HashSet<>();
-    /** Sauvegarde des emails initiaux pour comparaison. */
     private final Map<Integer, String> originalEmails = new HashMap<>();
     private final Map<Integer, String> originalTels   = new HashMap<>();
 
     @FXML
     public void initialize() {
-        // Colonnes lecture seule
-        colNom.setCellValueFactory(c ->
-                new SimpleStringProperty(safe(c.getValue().getNom_s())));
-        colPrenom.setCellValueFactory(c ->
-                new SimpleStringProperty(safe(c.getValue().getPrenom_s())));
-
-        // Colonne email éditable
-        colEmail.setCellValueFactory(c ->
-                new SimpleStringProperty(safe(c.getValue().getEmail_parent())));
-        colEmail.setCellFactory(TextFieldTableCell.forTableColumn());
-        colEmail.setOnEditCommit(evt -> {
-            Student s = evt.getRowValue();
-            String newVal = evt.getNewValue() == null ? "" : evt.getNewValue().trim();
-            s.setEmail_parent(newVal);
-            dirty.add(s.getId_s());
-            updateStatus();
-        });
-
-        // Colonne téléphone éditable
-        colTel.setCellValueFactory(c ->
-                new SimpleStringProperty(safe(c.getValue().getTelephone_parent())));
-        colTel.setCellFactory(TextFieldTableCell.forTableColumn());
-        colTel.setOnEditCommit(evt -> {
-            Student s = evt.getRowValue();
-            String newVal = evt.getNewValue() == null ? "" : evt.getNewValue().trim();
-            s.setTelephone_parent(newVal);
-            dirty.add(s.getId_s());
-            updateStatus();
-        });
-
-        tvEleves.setItems(data);
+        lvEleves.setItems(data);
+        lvEleves.setCellFactory(lv -> new ParentCardCell());
         actualiser(null);
     }
 
@@ -89,9 +55,7 @@ public class GestionParents {
             originalEmails.put(s.getId_s(), safe(s.getEmail_parent()));
             originalTels.put(s.getId_s(), safe(s.getTelephone_parent()));
         }
-        if (lbCompteur != null) {
-            lbCompteur.setText(list.size() + " élève(s)");
-        }
+        if (lbCompteur != null) lbCompteur.setText(list.size() + " élève(s)");
         updateStatus();
     }
 
@@ -152,11 +116,13 @@ public class GestionParents {
             conf.setHeaderText(null);
             if (conf.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
         }
-        Stage stage = (Stage) tvEleves.getScene().getWindow();
+        Stage stage = (Stage) lvEleves.getScene().getWindow();
         stage.close();
     }
 
-    // ================ helpers ================
+    // ============================================================
+    // Helpers
+    // ============================================================
 
     private void updateStatus() {
         if (lbStatus == null) return;
@@ -172,5 +138,106 @@ public class GestionParents {
     private void showInfo(String t, String m) {
         Alert a = new Alert(Alert.AlertType.INFORMATION);
         a.setTitle(t); a.setHeaderText(null); a.setContentText(m); a.show();
+    }
+
+    // ============================================================
+    //  CARTE PARENT - cellule éditable
+    // ============================================================
+    private class ParentCardCell extends ListCell<Student> {
+        @Override
+        protected void updateItem(Student s, boolean empty) {
+            super.updateItem(s, empty);
+            if (empty || s == null) {
+                setGraphic(null);
+                setText(null);
+                setStyle("-fx-background-color: transparent;");
+                return;
+            }
+
+            // ---- Avatar ----
+            Label avatar = new Label(initiales(s.getNomComplet()));
+            avatar.getStyleClass().add("pro-card-avatar");
+            StackPane avatarPane = new StackPane(avatar);
+            avatarPane.getStyleClass().add("pro-card-avatar-pane");
+
+            // ---- Identité ----
+            Label nom = new Label(s.getNomComplet().trim());
+            nom.getStyleClass().add("pro-card-name");
+            Label sub = new Label("ID #" + s.getId_s());
+            sub.getStyleClass().add("pro-card-sub");
+            VBox identity = new VBox(2, nom, sub);
+
+            HBox left = new HBox(14, avatarPane, identity);
+            left.setAlignment(Pos.CENTER_LEFT);
+            left.setMinWidth(220);
+
+            // ---- Email field ----
+            Label emLab = new Label("📧  EMAIL PARENT");
+            emLab.getStyleClass().add("pro-label");
+
+            TextField tfEmail = new TextField(safe(s.getEmail_parent()));
+            tfEmail.setPromptText("ex: parent@gmail.com");
+            tfEmail.getStyleClass().add("pro-input");
+            tfEmail.textProperty().addListener((obs, oldV, newV) -> {
+                s.setEmail_parent(newV);
+                if (!safe(newV).equals(originalEmails.getOrDefault(s.getId_s(), ""))) {
+                    dirty.add(s.getId_s());
+                } else {
+                    // si revenu à la valeur originale, on retire de dirty si tel aussi original
+                    if (safe(s.getTelephone_parent()).equals(originalTels.getOrDefault(s.getId_s(), ""))) {
+                        dirty.remove(s.getId_s());
+                    }
+                }
+                updateStatus();
+            });
+
+            VBox emailBox = new VBox(4, emLab, tfEmail);
+            HBox.setHgrow(emailBox, Priority.ALWAYS);
+
+            // ---- Tel field ----
+            Label telLab = new Label("📱  TÉLÉPHONE PARENT");
+            telLab.getStyleClass().add("pro-label");
+
+            TextField tfTel = new TextField(safe(s.getTelephone_parent()));
+            tfTel.setPromptText("ex: +216 22 333 444");
+            tfTel.getStyleClass().add("pro-input");
+            tfTel.setMaxWidth(220);
+            tfTel.textProperty().addListener((obs, oldV, newV) -> {
+                s.setTelephone_parent(newV);
+                if (!safe(newV).equals(originalTels.getOrDefault(s.getId_s(), ""))) {
+                    dirty.add(s.getId_s());
+                } else {
+                    if (safe(s.getEmail_parent()).equals(originalEmails.getOrDefault(s.getId_s(), ""))) {
+                        dirty.remove(s.getId_s());
+                    }
+                }
+                updateStatus();
+            });
+
+            VBox telBox = new VBox(4, telLab, tfTel);
+            telBox.setMaxWidth(240);
+
+            // ---- Card layout ----
+            HBox card = new HBox(20, left, emailBox, telBox);
+            card.setAlignment(Pos.CENTER_LEFT);
+            card.getStyleClass().add("pro-parent-card");
+            card.setStyle("-fx-background-color: #16162e; -fx-background-radius: 12; "
+                    + "-fx-padding: 18 22; "
+                    + "-fx-border-color: #2d2d4e; -fx-border-width: 1; -fx-border-radius: 12;");
+
+            setGraphic(card);
+            setText(null);
+            setStyle("-fx-background-color: transparent; -fx-padding: 5 0;");
+        }
+
+        private String initiales(String full) {
+            if (full == null || full.isBlank()) return "?";
+            String[] parts = full.trim().split("\\s+");
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < parts.length && sb.length() < 2; i++) {
+                if (!parts[i].isEmpty()) sb.append(Character.toUpperCase(parts[i].charAt(0)));
+            }
+            return sb.length() == 0 ? "?" : sb.toString();
+        }
     }
 }

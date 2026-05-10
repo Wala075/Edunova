@@ -78,6 +78,12 @@
             <artifactId>openhtmltopdf-pdfbox</artifactId>
             <version>1.0.10</version>
         </dependency>
+        <!-- Support RTL pour l'arabe dans le PDF -->
+        <dependency>
+            <groupId>com.openhtmltopdf</groupId>
+            <artifactId>openhtmltopdf-rtl-support</artifactId>
+            <version>1.0.10</version>
+        </dependency>
     </dependencies>
 
     <!-- ⭐ NOUVEAU : Plugin Maven pour lancer JavaFX -->

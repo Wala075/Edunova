@@ -67,6 +67,15 @@ public class GeminiService {
         return generate(prompt);
     }
 
+    /** Reformule/corrige un texte brut écrit par le professeur. */
+    public String reformulerAppreciation(Bulletin b, String texteUtilisateur) throws IOException {
+        if (texteUtilisateur == null || texteUtilisateur.isBlank()) {
+            throw new IOException("Texte vide à reformuler.");
+        }
+        String prompt = PromptBuilder.buildReformulation(b, texteUtilisateur);
+        return generate(prompt);
+    }
+
     /** Appel générique : envoie un prompt brut, renvoie la réponse texte. */
     public String generate(String prompt) throws IOException {
         String apiKey = ConfigLoader.get("GEMINI_API_KEY");

@@ -6,6 +6,7 @@ import edu.edunova.entities.Note;
 import edu.edunova.entities.Student;
 import edu.edunova.services.ClasseService;
 import edu.edunova.services.NoteService;
+import edu.edunova.utils.AnneeScolaire;
 import edu.edunova.utils.InputUtils;
 
 import javafx.event.ActionEvent;
@@ -56,6 +57,18 @@ public class AjouterNote {
         // Élève and Matière are disabled until a class is chosen
         cbEleve.setDisable(true);
         cbMatiere.setDisable(true);
+
+        // ----- Année scolaire automatique : calculée depuis dpDate -----
+        // Champ verrouillé (lecture seule) pour éviter toute saisie incohérente.
+        tfAnnee.setEditable(false);
+        tfAnnee.setFocusTraversable(false);
+        tfAnnee.setStyle(tfAnnee.getStyle() + " -fx-opacity: 0.85;");
+        tfAnnee.setTooltip(new Tooltip("Calculé automatiquement depuis la date de saisie"));
+        // Sync initial
+        tfAnnee.setText(AnneeScolaire.fromDate(dpDate.getValue()));
+        // Re-calcul à chaque changement de date
+        dpDate.valueProperty().addListener((obs, oldD, newD) ->
+                tfAnnee.setText(AnneeScolaire.fromDate(newD)));
 
         chargerClasses();
 
@@ -215,7 +228,7 @@ public class AjouterNote {
         cbType.setValue(null);
         cbTrimestre.setValue(null);
         dpDate.setValue(java.time.LocalDate.now());
-        tfAnnee.setText("2024-2025");
+        // L'année est recalculée automatiquement via le listener sur dpDate
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
