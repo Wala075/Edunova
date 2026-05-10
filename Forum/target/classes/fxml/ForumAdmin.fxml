@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane minWidth="900.0" minHeight="600.0"
+            style="-fx-background-color:#f8f8ff;"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.ForumAdminController">
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox prefWidth="250.0" spacing="0.0"
+              style="-fx-background-color:#ffffff;-fx-border-color:#e5e7eb;-fx-border-width:0 1 0 0;">
+            <VBox alignment="CENTER" spacing="4.0" style="-fx-padding:28 20 20 20;">
+                <Label style="-fx-font-size:26px;-fx-font-weight:900;-fx-text-fill:#7c3aed;" text="EduNova"/>
+                <Label style="-fx-font-size:11px;-fx-text-fill:#9ca3af;" text="Application de gestion scolaire"/>
+            </VBox>
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-padding:16 20 20 20;-fx-background-color:#f5f3ff;">
+                <padding><Insets bottom="16" left="12" right="12" top="16"/></padding>
+                <Label fx:id="lbUserInitiales"
+                       style="-fx-background-color:#7c3aed;-fx-text-fill:white;-fx-font-weight:700;-fx-font-size:20px;-fx-background-radius:50%;-fx-min-width:56px;-fx-min-height:56px;-fx-pref-width:56px;-fx-pref-height:56px;-fx-alignment:center;"
+                       text="A"/>
+                <Label fx:id="lbUserEmail"
+                       style="-fx-font-size:13px;-fx-font-weight:600;-fx-text-fill:#1f2937;" text="admin@edunova.com"/>
+                <Label fx:id="lbUserRole"
+                       style="-fx-background-color:#7c3aed;-fx-text-fill:white;-fx-font-size:11px;-fx-font-weight:600;-fx-background-radius:20px;-fx-padding:3 12 3 12;"
+                       text="Administrateur"/>
+            </VBox>
+            <Region style="-fx-pref-height:16px;"/>
+            <Separator/>
+            <Region style="-fx-pref-height:8px;"/>
+            <Button maxWidth="1.7976931348623157E308" prefHeight="44.0"
+                    style="-fx-background-color:transparent;-fx-text-fill:#374151;-fx-font-size:13px;-fx-alignment:CENTER_LEFT;-fx-padding:0 0 0 20;-fx-background-radius:0;-fx-cursor:hand;"
+                    text="📋  Tableau de bord"/>
+            <Button maxWidth="1.7976931348623157E308" prefHeight="44.0"
+                    style="-fx-background-color:#7c3aed;-fx-text-fill:white;-fx-font-weight:700;-fx-font-size:13px;-fx-alignment:CENTER_LEFT;-fx-padding:0 0 0 20;-fx-background-radius:0;-fx-cursor:hand;"
+                    text="💬  Forum"/>
+            <Button maxWidth="1.7976931348623157E308" prefHeight="44.0"
+                    style="-fx-background-color:transparent;-fx-text-fill:#374151;-fx-font-size:13px;-fx-alignment:CENTER_LEFT;-fx-padding:0 0 0 20;-fx-background-radius:0;-fx-cursor:hand;"
+                    text="👥  Utilisateurs"/>
+            <Button maxWidth="1.7976931348623157E308" prefHeight="44.0"
+                    style="-fx-background-color:transparent;-fx-text-fill:#374151;-fx-font-size:13px;-fx-alignment:CENTER_LEFT;-fx-padding:0 0 0 20;-fx-background-radius:0;-fx-cursor:hand;"
+                    text="🎓  Étudiants"/>
+            <Button maxWidth="1.7976931348623157E308" prefHeight="44.0"
+                    style="-fx-background-color:transparent;-fx-text-fill:#374151;-fx-font-size:13px;-fx-alignment:CENTER_LEFT;-fx-padding:0 0 0 20;-fx-background-radius:0;-fx-cursor:hand;"
+                    text="👩‍🏫  Enseignants"/>
+            <Button maxWidth="1.7976931348623157E308" prefHeight="44.0"
+                    style="-fx-background-color:transparent;-fx-text-fill:#374151;-fx-font-size:13px;-fx-alignment:CENTER_LEFT;-fx-padding:0 0 0 20;-fx-background-radius:0;-fx-cursor:hand;"
+                    text="📅  Emploi du temps"/>
+            <Button maxWidth="1.7976931348623157E308" prefHeight="44.0"
+                    style="-fx-background-color:transparent;-fx-text-fill:#374151;-fx-font-size:13px;-fx-alignment:CENTER_LEFT;-fx-padding:0 0 0 20;-fx-background-radius:0;-fx-cursor:hand;"
+                    text="📊  Notes"/>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Separator/>
+            <Button fx:id="btnTheme" maxWidth="1.7976931348623157E308" onAction="#toggleTheme" prefHeight="44.0"
+                    style="-fx-background-color:transparent;-fx-text-fill:#6b7280;-fx-font-size:13px;-fx-alignment:CENTER_LEFT;-fx-padding:0 0 0 20;-fx-background-radius:0;-fx-cursor:hand;"
+                    text="🌙  Mode sombre"/>
+            <Button maxWidth="1.7976931348623157E308" onAction="#seDeconnecter" prefHeight="44.0"
+                    style="-fx-background-color:transparent;-fx-text-fill:#ef4444;-fx-font-size:13px;-fx-alignment:CENTER_LEFT;-fx-padding:0 0 0 20;-fx-background-radius:0;-fx-cursor:hand;"
+                    text="🚪  Déconnexion"/>
+            <Region style="-fx-pref-height:12px;"/>
+        </VBox>
+    </left>
+
+    <!-- CONTENU PRINCIPAL -->
+    <center>
+        <VBox spacing="18.0" style="-fx-padding:28 32 28 32;">
+
+            <!-- Titre -->
+            <VBox spacing="4.0">
+                <Label style="-fx-font-size:26px;-fx-font-weight:900;-fx-text-fill:#1f2937;" text="Forum — Modération"/>
+                <Label style="-fx-font-size:12px;-fx-text-fill:#9ca3af;" text="Gestion et validation des publications"/>
+            </VBox>
+
+            <!-- Stats -->
+            <HBox spacing="14.0">
+                <VBox spacing="4.0" HBox.hgrow="ALWAYS" prefWidth="1.0"
+                      style="-fx-background-color:white;-fx-background-radius:12px;-fx-border-color:#e5e7eb;-fx-border-radius:12px;-fx-border-width:1px;-fx-padding:16 18;">
+                    <Label style="-fx-font-size:11px;-fx-text-fill:#9ca3af;" text="Total Posts"/>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label style="-fx-font-size:18px;" text="📝"/>
+                        <Label fx:id="lbTotalPosts" style="-fx-font-size:28px;-fx-font-weight:900;-fx-text-fill:#1f2937;" text="0"/>
+                    </HBox>
+                </VBox>
+                <VBox spacing="4.0" HBox.hgrow="ALWAYS" prefWidth="1.0"
+                      style="-fx-background-color:white;-fx-background-radius:12px;-fx-border-color:#7c3aed;-fx-border-radius:12px;-fx-border-width:1.5px;-fx-padding:16 18;">
+                    <Label style="-fx-font-size:11px;-fx-text-fill:#9ca3af;" text="En attente"/>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label style="-fx-font-size:18px;" text="⏳"/>
+                        <Label fx:id="lbEnAttente" style="-fx-font-size:28px;-fx-font-weight:900;-fx-text-fill:#7c3aed;" text="0"/>
+                    </HBox>
+                </VBox>
+                <VBox spacing="4.0" HBox.hgrow="ALWAYS" prefWidth="1.0"
+                      style="-fx-background-color:white;-fx-background-radius:12px;-fx-border-color:#6b7280;-fx-border-radius:12px;-fx-border-width:1.5px;-fx-padding:16 18;">
+                    <Label style="-fx-font-size:11px;-fx-text-fill:#9ca3af;" text="Acceptés"/>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label style="-fx-font-size:18px;" text="✓"/>
+                        <Label fx:id="lbApprouves" style="-fx-font-size:28px;-fx-font-weight:900;-fx-text-fill:#374151;" text="0"/>
+                    </HBox>
+                </VBox>
+                <VBox spacing="4.0" HBox.hgrow="ALWAYS" prefWidth="1.0"
+                      style="-fx-background-color:white;-fx-background-radius:12px;-fx-border-color:#9ca3af;-fx-border-radius:12px;-fx-border-width:1.5px;-fx-padding:16 18;">
+                    <Label style="-fx-font-size:11px;-fx-text-fill:#9ca3af;" text="Refusés"/>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label style="-fx-font-size:18px;" text="✕"/>
+                        <Label fx:id="lbRejetes" style="-fx-font-size:28px;-fx-font-weight:900;-fx-text-fill:#6b7280;" text="0"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <!-- Filtre + Recherche -->
+            <HBox alignment="CENTER_LEFT" spacing="12.0"
+                  style="-fx-background-color:white;-fx-background-radius:12px;-fx-border-color:#e5e7eb;-fx-border-radius:12px;-fx-border-width:1px;-fx-padding:12 16;">
+                <Label style="-fx-font-size:13px;-fx-font-weight:600;-fx-text-fill:#374151;" text="Filtrer :"/>
+                <ComboBox fx:id="cbFiltreStatut" prefHeight="34.0" prefWidth="145.0"
+                          style="-fx-background-color:#f9fafb;-fx-border-color:#e5e7eb;-fx-border-radius:8px;-fx-background-radius:8px;-fx-font-size:12px;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="tfRecherche" prefHeight="34.0" prefWidth="240.0"
+                           promptText="Rechercher un post..."
+                           style="-fx-background-color:#f9fafb;-fx-border-color:#e5e7eb;-fx-border-radius:8px;-fx-background-radius:8px;-fx-font-size:12px;-fx-padding:4 10;"/>
+                <Button onAction="#rechercher" prefHeight="34.0"
+                        style="-fx-background-color:#1f2937;-fx-text-fill:white;-fx-font-size:12px;-fx-background-radius:8px;-fx-cursor:hand;-fx-padding:4 14;"
+                        text="Rechercher"/>
+                <Button onAction="#resetRecherche" prefHeight="34.0"
+                        style="-fx-background-color:#f3f4f6;-fx-text-fill:#374151;-fx-background-radius:8px;-fx-cursor:hand;-fx-padding:4 12;"
+                        text="↺"/>
+                <Button onAction="#toggleNouveauPost" prefHeight="34.0"
+                        style="-fx-background-color:#7c3aed;-fx-text-fill:white;-fx-font-size:12px;-fx-font-weight:600;-fx-background-radius:8px;-fx-cursor:hand;-fx-padding:4 16;"
+                        text="+ Nouveau post admin"/>
+            </HBox>
+
+            <!-- Formulaire nouveau post admin -->
+            <VBox fx:id="panelNouveauPost" managed="false" visible="false" spacing="10.0"
+                  style="-fx-background-color:white;-fx-background-radius:12px;-fx-border-color:#7c3aed;-fx-border-radius:12px;-fx-border-width:1.5px;-fx-padding:18 22;">
+                <Label style="-fx-font-size:14px;-fx-font-weight:700;-fx-text-fill:#7c3aed;" text="Publier en tant qu'Administrateur"/>
+                <Label style="-fx-font-size:11px;-fx-text-fill:#9ca3af;" text="Le post sera publié directement sans validation."/>
+                <TextField fx:id="tfAdminTitre" prefHeight="36.0" promptText="Titre du post..."
+                           style="-fx-border-color:#e5e7eb;-fx-border-radius:8px;-fx-background-radius:8px;-fx-font-size:13px;-fx-padding:6 10;"/>
+                <TextArea fx:id="taAdminContenu" prefHeight="90.0" promptText="Contenu du post..." wrapText="true"
+                          style="-fx-border-color:#e5e7eb;-fx-border-radius:8px;-fx-background-radius:8px;-fx-font-size:13px;"/>
+                <Label fx:id="lbAdminFeedback" style="-fx-font-size:12px;" text=""/>
+                <HBox spacing="10.0">
+                    <Button onAction="#publierAdmin" prefHeight="34.0"
+                            style="-fx-background-color:#1f2937;-fx-text-fill:white;-fx-font-size:12px;-fx-font-weight:600;-fx-background-radius:8px;-fx-cursor:hand;-fx-padding:4 18;"
+                            text="Publier"/>
+                    <Button onAction="#toggleNouveauPost" prefHeight="34.0"
+                            style="-fx-background-color:transparent;-fx-border-color:#d1d5db;-fx-border-width:1px;-fx-border-radius:8px;-fx-background-radius:8px;-fx-text-fill:#6b7280;-fx-font-size:12px;-fx-cursor:hand;-fx-padding:4 14;"
+                            text="Annuler"/>
+                </HBox>
+            </VBox>
+
+            <!-- Liste de cartes posts -->
+            <ScrollPane fx:id="spPosts" fitToWidth="true" VBox.vgrow="ALWAYS"
+                        style="-fx-background:transparent;-fx-background-color:transparent;-fx-border-color:transparent;">
+                <VBox fx:id="vbCards" spacing="12.0" style="-fx-padding:2 4 8 4;"/>
+            </ScrollPane>
+
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,0 +1,17 @@
+.root {
+    -fx-background-color: #f8f8ff;
+    -fx-text-fill: #1f2937;
+}
+.card {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+}
+.sidebar {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+}
+.input-field {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #e5e7eb;
+    -fx-text-fill: #1f2937;
+}
