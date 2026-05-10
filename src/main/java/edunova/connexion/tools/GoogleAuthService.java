@@ -23,7 +23,10 @@ public class GoogleAuthService {
     private static final String CLIENT_SECRET = getClientSecret();
 
     private static String getClientId() {
-        String envId = System.getenv("GOOGLE_CLIENT_ID");
+        String envId = System.getProperty("GOOGLE_CLIENT_ID");
+        if (envId == null) {
+            envId = System.getenv("GOOGLE_CLIENT_ID");
+        }
         if (envId != null && !envId.isEmpty()) {
             return envId;
         }
@@ -31,7 +34,10 @@ public class GoogleAuthService {
     }
     
     private static String getClientSecret() {
-        String envSecret = System.getenv("GOOGLE_CLIENT_SECRET");
+        String envSecret = System.getProperty("GOOGLE_CLIENT_SECRET");
+        if (envSecret == null) {
+            envSecret = System.getenv("GOOGLE_CLIENT_SECRET");
+        }
         if (envSecret != null && !envSecret.isEmpty()) {
             return envSecret;
         }

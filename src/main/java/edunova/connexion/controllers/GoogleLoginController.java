@@ -37,7 +37,10 @@ public class GoogleLoginController {
         demarrerServeurLocal();
         
         // Configuration Google OAuth2 - Load from environment
-        String clientId = System.getenv("GOOGLE_CLIENT_ID");
+        String clientId = System.getProperty("GOOGLE_CLIENT_ID");
+        if (clientId == null) {
+            clientId = System.getenv("GOOGLE_CLIENT_ID");
+        }
         if (clientId == null || clientId.isEmpty()) {
             throw new IllegalStateException("GOOGLE_CLIENT_ID environment variable not set");
         }

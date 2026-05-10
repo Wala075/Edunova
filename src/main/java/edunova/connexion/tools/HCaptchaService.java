@@ -13,8 +13,11 @@ public class HCaptchaService {
     private static final String SECRET_KEY = getSecretKey();
 
     private static String getSecretKey() {
-        // Load from environment variable
-        String envKey = System.getenv("HCAPTCHA_SECRET_KEY");
+        // Load from environment variable (set by EnvLoader)
+        String envKey = System.getProperty("HCAPTCHA_SECRET_KEY");
+        if (envKey == null) {
+            envKey = System.getenv("HCAPTCHA_SECRET_KEY");
+        }
         if (envKey != null && !envKey.isEmpty()) {
             return envKey;
         }

@@ -1,5 +1,6 @@
 package edunova.connexion.tests;
 
+import edunova.connexion.config.EnvLoader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -22,6 +23,9 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        // Charger les variables d'environnement depuis .env
+        EnvLoader.load();
+        
         launch();
     }
 }
