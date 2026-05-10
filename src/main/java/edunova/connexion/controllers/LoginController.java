@@ -1,7 +1,9 @@
 package edunova.connexion.controllers;
 
 import edunova.connexion.dao.UserDAO;
+import edunova.connexion.dao.RiskDAO;
 import edunova.connexion.models.User;
+import edunova.connexion.models.RiskData;
 import edunova.connexion.tools.*;
 
 import com.google.api.services.oauth2.model.Userinfo;
@@ -26,6 +28,7 @@ import java.util.UUID;
 public class LoginController {
 
     // ── Connexion ─────────────────────────────────────────────────
+    @FXML private VBox          sidebarLogin;
     @FXML private VBox          panneauConnexion;
     @FXML private TextField     txtEmailO;
     @FXML private PasswordField txtPasswordO;
@@ -39,8 +42,8 @@ public class LoginController {
     @FXML private TextField        txtRegEmail;
     @FXML private TextField        txtRegTel;
     @FXML private PasswordField    txtRegPassword;
+    @FXML private TextField        txtRegPasswordVisible;
     @FXML private PasswordField    txtRegConfirm;
-    @FXML private ComboBox<String> cbRegRole;
     @FXML private CheckBox         chkCgu;
     @FXML private Label            errRegNom;
     @FXML private Label            errRegPrenom;
@@ -48,15 +51,18 @@ public class LoginController {
     @FXML private Label            errRegTel;
     @FXML private Label            errRegPassword;
     @FXML private Label            errRegConfirm;
-    @FXML private Label            errRegRole;
     @FXML private Label            errCgu;
-    @FXML private Button btnGoogleLogin;
+    @FXML private Button           btnGoogleLogin;
 
-    // ── Captcha ───────────────────────────────────────────────────
-    @FXML private Label  lblCaptchaStatut;
-    @FXML private Button btnOuvrirCaptcha;
-    @FXML private Label  errCaptcha;
+    // ── Captcha Mathématique ─────────────────────────────────────
+    @FXML private CheckBox chkCaptcha;
+    @FXML private VBox vboxCaptchaQuestion;
+    @FXML private Label lblCaptchaQuestion;
+    @FXML private TextField txtCaptchaReponse;
+    @FXML private Button btnVerifierCaptcha;
+    @FXML private Label errCaptcha;
     private boolean captchaValide = false;
+    private int reponseCorrecteCaptcha = 0;
 
     // ── Dropdown téléphone ────────────────────────────────────────
     @FXML private Button    btnPaysReg;
@@ -71,9 +77,9 @@ public class LoginController {
     // ── INITIALISATION ────────────────────────────────────────────
     @FXML
     public void initialize() {
-        cbRegRole.getItems().addAll(
-                "Administrateur", "Enseignant", "Etudiant");
-
+        // Apply background image to sidebar
+        applySidebarBackground();
+        
         // Validations temps réel connexion
         txtEmailO.textProperty().addListener((o, old, n) -> {
             if (!n.isEmpty()) validerLoginEmail();
@@ -103,101 +109,138 @@ public class LoginController {
                                 true, btnPaysReg));
     }
 
-    // ── Ouvrir hCaptcha dans le navigateur système ────────────────
-    @FXML
-    private void handleOuvrirCaptcha() {
-        // Désactiver le bouton pendant la vérification
-        btnOuvrirCaptcha.setDisable(true);
-        btnOuvrirCaptcha.setText("⏳ Ouverture...");
-        errCaptcha.setText("");
-
-        new Thread(() -> {
+    /**
+     * Applies a background image to the sidebar
+     */
+    private void applySidebarBackground() {
+        if (sidebarLogin != null) {
             try {
-                HCaptchaServer server = new HCaptchaServer();
-
-                // Ouvrir le navigateur avec la page captcha
-                Platform.runLater(() ->
-                        HCaptchaService.ouvrirNavigateur(
-                                "http://localhost:7654/captcha"));
-
-                // Attendre le token (max 120 secondes)
-                String token = server.attendreToken(120);
-
-                if (token != null && !token.isEmpty()) {
-                    // Vérifier avec l'API hCaptcha
-                    boolean ok =
-                            HCaptchaService.verifier(token);
-
-                    Platform.runLater(() -> {
-                        if (ok) {
-                            captchaValide = true;
-                            btnOuvrirCaptcha.setDisable(false);
-                            btnOuvrirCaptcha.setText(
-                                    "✅  Vérification réussie");
-                            btnOuvrirCaptcha.setStyle(
-                                    "-fx-background-color: #f0fdf4;" +
-                                            "-fx-text-fill: #16a34a;" +
-                                            "-fx-font-size: 12;" +
-                                            "-fx-font-weight: bold;" +
-                                            "-fx-background-radius: 8;" +
-                                            "-fx-padding: 10;" +
-                                            "-fx-border-color: #22c55e;" +
-                                            "-fx-border-radius: 8;" +
-                                            "-fx-border-width: 1.5;" +
-                                            "-fx-cursor: hand;");
-                            lblCaptchaStatut.setText(
-                                    "✅ Humain confirmé");
-                            lblCaptchaStatut.setStyle(
-                                    "-fx-font-size: 11;" +
-                                            "-fx-text-fill: #22c55e;" +
-                                            "-fx-font-weight: bold;");
-                            errCaptcha.setText("");
-                        } else {
-                            btnOuvrirCaptcha.setDisable(false);
-                            resetCaptcha();
-                            errCaptcha.setText(
-                                    "⚠ Vérification échouée," +
-                                            " réessayez.");
-                        }
-                    });
-                } else {
-                    // Timeout
-                    Platform.runLater(() -> {
-                        btnOuvrirCaptcha.setDisable(false);
-                        resetCaptcha();
-                        errCaptcha.setText(
-                                "⚠ Délai dépassé, réessayez.");
-                    });
-                }
-
-            } catch (Exception ex) {
-                Platform.runLater(() -> {
-                    btnOuvrirCaptcha.setDisable(false);
-                    resetCaptcha();
-                    errCaptcha.setText(
-                            "⚠ Erreur: " + ex.getMessage());
-                });
-                ex.printStackTrace();
+                // Load the background image
+                String imagePath = getClass().getResource("/images/login_sidebar_bg.jpg").toExternalForm();
+                
+                // Create background image with larger dimensions (450x660)
+                javafx.scene.image.Image bgImage = new javafx.scene.image.Image(imagePath, 450, 660, false, true);
+                
+                // Create background fill with the image - simple approach
+                javafx.scene.layout.BackgroundImage backgroundImage = new javafx.scene.layout.BackgroundImage(
+                    bgImage,
+                    javafx.scene.layout.BackgroundRepeat.NO_REPEAT,
+                    javafx.scene.layout.BackgroundRepeat.NO_REPEAT,
+                    javafx.scene.layout.BackgroundPosition.DEFAULT,
+                    new javafx.scene.layout.BackgroundSize(
+                        javafx.scene.layout.BackgroundSize.AUTO,
+                        javafx.scene.layout.BackgroundSize.AUTO,
+                        true, true, false, false
+                    )
+                );
+                
+                // Apply background to sidebar
+                sidebarLogin.setBackground(new javafx.scene.layout.Background(backgroundImage));
+                
+                System.out.println("✅ Background image applied to sidebar");
+                
+            } catch (Exception e) {
+                System.err.println("⚠️ Could not load background image, using gradient fallback: " + e.getMessage());
+                // Fallback to gradient if image fails to load
+                applySidebarGradient();
             }
-        }).start();
+        }
+    }
+    
+    /**
+     * Applies a gradient background to the sidebar (fallback)
+     */
+    private void applySidebarGradient() {
+        if (sidebarLogin != null) {
+            // Create a gradient background using JavaFX
+            javafx.scene.paint.LinearGradient gradient = new javafx.scene.paint.LinearGradient(
+                0, 0,           // Start X, Y
+                0, 1,           // End X, Y (1 = 100% of height)
+                true,           // proportional
+                javafx.scene.paint.CycleMethod.NO_CYCLE,
+                new javafx.scene.paint.Stop(0, javafx.scene.paint.Color.web("#0f1e3c")),      // Dark blue
+                new javafx.scene.paint.Stop(1, javafx.scene.paint.Color.web("#1e508c"))       // Light blue
+            );
+            
+            sidebarLogin.setStyle(
+                "-fx-padding: 40 28;"
+            );
+            sidebarLogin.setBackground(new javafx.scene.layout.Background(
+                new javafx.scene.layout.BackgroundFill(
+                    gradient,
+                    new javafx.scene.layout.CornerRadii(0),
+                    new javafx.geometry.Insets(0)
+                )
+            ));
+        }
     }
 
-    private void resetCaptcha() {
-        captchaValide = false;
-        btnOuvrirCaptcha.setText("  Cliquez pour vérifier");
-        btnOuvrirCaptcha.setStyle(
-                "-fx-background-color: white;" +
-                        "-fx-text-fill: #374151;" +
-                        "-fx-font-size: 12;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-background-radius: 8;" +
-                        "-fx-padding: 10;" +
-                        "-fx-border-color: #e2e8f0;" +
-                        "-fx-border-radius: 8;" +
-                        "-fx-border-width: 1.5;" +
-                        "-fx-cursor: hand;");
-        lblCaptchaStatut.setText("");
+    // ── Captcha Mathématique ─────────────────────────────────────
+    @FXML
+    private void handleCaptchaCheckbox() {
+        if (chkCaptcha.isSelected()) {
+            // Générer une nouvelle question
+            genererQuestionCaptcha();
+            vboxCaptchaQuestion.setVisible(true);
+            vboxCaptchaQuestion.setManaged(true);
+            txtCaptchaReponse.clear();
+            txtCaptchaReponse.requestFocus();
+        } else {
+            vboxCaptchaQuestion.setVisible(false);
+            vboxCaptchaQuestion.setManaged(false);
+            captchaValide = false;
+            errCaptcha.setText("");
+        }
+    }
+
+    private void genererQuestionCaptcha() {
+        int num1 = (int) (Math.random() * 10) + 1;
+        int num2 = (int) (Math.random() * 10) + 1;
+        reponseCorrecteCaptcha = num1 + num2;
+        lblCaptchaQuestion.setText(num1 + " + " + num2 + " = ?");
         errCaptcha.setText("");
+    }
+
+    @FXML
+    private void handleVerifierCaptcha() {
+        String reponse = txtCaptchaReponse.getText().trim();
+        
+        if (reponse.isEmpty()) {
+            errCaptcha.setText("⚠ Veuillez entrer votre réponse.");
+            return;
+        }
+        
+        try {
+            int reponseUtilisateur = Integer.parseInt(reponse);
+            
+            if (reponseUtilisateur == reponseCorrecteCaptcha) {
+                captchaValide = true;
+                errCaptcha.setText("✅ Correct!");
+                errCaptcha.setStyle("-fx-text-fill: #16a34a; -fx-font-weight: bold;");
+                btnVerifierCaptcha.setDisable(true);
+                txtCaptchaReponse.setDisable(true);
+            } else {
+                captchaValide = false;
+                errCaptcha.setText("❌ Incorrect, réessayez.");
+                errCaptcha.setStyle("-fx-text-fill: #ef4444; -fx-font-weight: bold;");
+                txtCaptchaReponse.clear();
+                txtCaptchaReponse.requestFocus();
+            }
+        } catch (NumberFormatException e) {
+            errCaptcha.setText("⚠ Veuillez entrer un nombre.");
+        }
+    }
+
+    private void resetCaptchaLogin() {
+        captchaValide = false;
+        chkCaptcha.setSelected(false);
+        vboxCaptchaQuestion.setVisible(false);
+        vboxCaptchaQuestion.setManaged(false);
+        txtCaptchaReponse.clear();
+        txtCaptchaReponse.setDisable(false);
+        btnVerifierCaptcha.setDisable(false);
+        errCaptcha.setText("");
+        errCaptcha.setStyle("-fx-text-fill: #ef4444; -fx-font-size: 11;");
     }
     // ══════════════════════════════════════════════════════════════
     //  DROPDOWN TÉLÉPHONE
@@ -271,7 +314,7 @@ public class LoginController {
         // Vérifier captcha
         if (!captchaValide) {
             errCaptcha.setText(
-                    "⚠ Veuillez compléter la vérification de sécurité.");
+                    "⚠ Veuillez cocher 'Je ne suis pas un robot' et résoudre la vérification.");
             return;
         }
         errCaptcha.setText("");
@@ -300,20 +343,55 @@ public class LoginController {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                int userId = rs.getInt("id_u");
+                
                 if (PasswordUtils.verify(password,
                         rs.getString("password_u"))) {
+
+                    // 🔍 Analyser le risque de connexion
+                    RiskDAO riskDAO = new RiskDAO();
+                    java.util.Map<String, Object> userHistory = riskDAO.getUserConnectionHistory(userId);
+                    
+                    RiskData riskData = 
+                        RiskAnalyzerIA.analyzeRisk(
+                            userId,
+                            "127.0.0.1", // IP locale pour test
+                            "Tunisia",   // Pays
+                            "Windows",   // Device
+                            0,           // Pas de tentatives échouées
+                            50.0,        // Vitesse de saisie normale
+                            userHistory
+                        );
+                    
+                    // Enregistrer l'analyse de risque
+                    riskDAO.insertRiskData(riskData);
+                    
+                    // Vérifier si la connexion est bloquée
+                    if (riskData.isBlocked()) {
+                        showAlert("❌ Connexion Bloquée\n\n" +
+                                "Score de risque trop élevé: " + riskData.getRiskScore() + "/100\n" +
+                                "Niveau: " + riskData.getRiskLevel() + "\n\n" +
+                                "Veuillez contacter l'administrateur.");
+                        resetCaptchaLogin();
+                        // Rafraîchir les statistiques du dashboard
+                        DashboardController.rafraichirStatistiquesGlobales();
+                        return;
+                    }
 
                     String role = rs.getString("nom_r");
                     SessionManager s =
                             SessionManager.getInstance();
-                    s.setUserId(rs.getInt("id_u"));
+                    s.setUserId(userId);
                     s.setEmail(email);
                     s.setRole(role);
+                    
+                    // Ajouter le score de risque à la session
+                    s.setRiskScore(riskData.getRiskScore());
 
                     enregistrerHistorique(conn,
-                            rs.getInt("id_u"), true);
+                            userId, true);
                     ouvrirDashboard();
-                    captchaValide = false;
+                    resetCaptchaLogin();
 
                 } else {
                     enregistrerHistorique(conn,
@@ -321,7 +399,9 @@ public class LoginController {
                     setErreur(txtPasswordO,
                             errLoginPassword,
                             "Mot de passe incorrect.");
-                    resetCaptcha();
+                    resetCaptchaLogin();
+                    // Rafraîchir les statistiques du dashboard
+                    DashboardController.rafraichirStatistiquesGlobales();
                 }
             } else {
                 setErreur(txtEmailO, errLoginEmail,
@@ -341,36 +421,68 @@ public class LoginController {
 
     @FXML
     private void handleGoogleLogin() {
-        // Pas de popup — traitement direct en arrière-plan
-        btnGoogleLogin.setDisable(true);
-        btnGoogleLogin.setText("⏳ Connexion Google...");
+        try {
+            // Charger la fenêtre Google OAuth2
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/views/google_oauth2_window.fxml"));
+            VBox root = loader.load();
+            
+            GoogleOAuth2WindowController controller = loader.getController();
+            
+            // Créer la fenêtre avec une taille augmentée
+            Stage googleWindow = new Stage();
+            googleWindow.setTitle("Connexion Google");
+            googleWindow.setScene(new Scene(root, 500, 600));
+            googleWindow.initModality(Modality.APPLICATION_MODAL);
+            googleWindow.setResizable(false);
+            
+            controller.setStage(googleWindow);
+            
+            // Callback de succès
+            controller.setOnSuccessCallback(() -> {
+                String code = controller.getAuthorizationCode();
+                if (code != null && !code.isEmpty()) {
+                    // Traiter le code d'autorisation
+                    traiterCodeGoogleOAuth2(code);
+                }
+            });
+            
+            // Afficher la fenêtre
+            googleWindow.showAndWait();
+            
+        } catch (Exception ex) {
+            showAlert("❌ Erreur: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
 
+    private void traiterCodeGoogleOAuth2(String code) {
         new Thread(() -> {
             try {
-                Userinfo userInfo =
-                        GoogleAuthService.getGoogleUserInfo();
-                String email  = userInfo.getEmail();
-                String nom    = userInfo.getFamilyName() != null
-                        ? userInfo.getFamilyName() : "";
-                String prenom = userInfo.getGivenName() != null
-                        ? userInfo.getGivenName() : "";
-
-                Platform.runLater(() -> {
-                    btnGoogleLogin.setDisable(false);
-                    btnGoogleLogin.setText(
-                            "  G   Continuer avec Google");
-                    traiterConnexionGoogle(
-                            email, nom, prenom);
-                });
-
+                System.out.println("LoginController: Traitement du code Google OAuth2");
+                
+                // Échanger le code pour les infos utilisateur
+                String[] userInfo = GoogleOAuth2Service.echangerCodePourInfos(code);
+                
+                if (userInfo != null && userInfo.length >= 1) {
+                    String email = userInfo[0];
+                    String nom = userInfo.length > 1 ? userInfo[1] : "";
+                    String prenom = userInfo.length > 2 ? userInfo[2] : "";
+                    
+                    Platform.runLater(() -> {
+                        traiterConnexionGoogle(email, nom, prenom);
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        showAlert("❌ Impossible de récupérer les informations Google");
+                    });
+                }
+                
             } catch (Exception ex) {
                 Platform.runLater(() -> {
-                    btnGoogleLogin.setDisable(false);
-                    btnGoogleLogin.setText(
-                            "  G   Continuer avec Google");
-                    showAlert("❌ Erreur Google :\n" +
-                            ex.getMessage());
+                    showAlert("❌ Erreur lors du traitement: " + ex.getMessage());
                 });
+                ex.printStackTrace();
             }
         }).start();
     }
@@ -394,19 +506,25 @@ public class LoginController {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                int userId = rs.getInt("id_u");
                 String role = rs.getString("nom_r");
+                
+                // Enregistrer les données de connexion dans la BD
+                enregistrerDonneesConnexion(conn, userId);
+                
                 SessionManager s =
                         SessionManager.getInstance();
-                s.setUserId(rs.getInt("id_u"));
+                s.setUserId(userId);
                 s.setEmail(email);
                 s.setRole(role);
-                enregistrerHistorique(conn,
-                        rs.getInt("id_u"), true);
+                enregistrerHistorique(conn, userId, true);
                 showAlert("✅ Connexion Google réussie !\n" +
                         "Bienvenue " +
                         rs.getString("prenom_u") + " " +
                         rs.getString("nom_u"));
                 ouvrirDashboard();
+                // Rafraîchir les statistiques du dashboard
+                DashboardController.rafraichirStatistiquesGlobales();
             } else {
                 showAlert("📋 Compte Google non trouvé.\n\n" +
                         "Veuillez compléter votre inscription.");
@@ -465,6 +583,34 @@ public class LoginController {
         }
     }
 
+    // ── Enregistrer Données de Connexion ──────────────────────────
+    private void enregistrerDonneesConnexion(
+            Connection conn, int userId) {
+        try {
+            RiskDAO riskDAO = new RiskDAO();
+            
+            // Créer un objet RiskData avec les informations de connexion
+            RiskData riskData = new RiskData();
+            riskData.setUserId(userId);
+            riskData.setIpAddress("127.0.0.1");
+            riskData.setCountry("Local");
+            riskData.setDevice("Desktop");
+            riskData.setLoginTime(java.time.LocalDateTime.now());
+            riskData.setFailedAttempts(0);
+            riskData.setTypingSpeed(0.0);
+            
+            // Insérer les données de risque
+            riskDAO.insertRiskData(riskData);
+            
+            System.out.println("LoginController: Données de connexion enregistrées pour l'utilisateur " + userId);
+            
+        } catch (Exception e) {
+            System.out.println(
+                    "Erreur enregistrement données connexion : " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     // ── Mot de passe oublié ───────────────────────────────────────
     @FXML
     private void handleForgotPassword() {
@@ -514,9 +660,8 @@ public class LoginController {
         boolean e  = validerRegEmail();
         boolean pw = validerRegPassword();
         boolean cf = validerRegConfirm();
-        boolean r  = validerRegRole();
         boolean cg = validerCgu();
-        if (!n || !p || !e || !pw || !cf || !r || !cg)
+        if (!n || !p || !e || !pw || !cf || !cg)
             return;
 
         User u = new User();
@@ -529,7 +674,6 @@ public class LoginController {
         u.setTelephone(numero);
         u.setPassword(txtRegPassword.getText());
         u.setActif(true);
-        u.setRoleId(getRoleId(cbRegRole.getValue()));
 
         if (dao.insert(u)) {
             showAlert("✅ Compte créé avec succès !\n\n" +
@@ -655,16 +799,6 @@ public class LoginController {
         return true;
     }
 
-    private boolean validerRegRole() {
-        if (cbRegRole.getValue() == null) {
-            errRegRole.setText(
-                    "⚠ Veuillez sélectionner un rôle.");
-            return false;
-        }
-        errRegRole.setText("");
-        return true;
-    }
-
     private boolean validerCgu() {
         if (!chkCgu.isSelected()) {
             errCgu.setText(
@@ -715,7 +849,6 @@ public class LoginController {
         txtRegTel.clear();
         txtRegPassword.clear();
         txtRegConfirm.clear();
-        cbRegRole.setValue(null);
         chkCgu.setSelected(false);
         errRegNom.setText("");
         errRegPrenom.setText("");
@@ -723,7 +856,6 @@ public class LoginController {
         errRegTel.setText("");
         errRegPassword.setText("");
         errRegConfirm.setText("");
-        errRegRole.setText("");
         errCgu.setText("");
         dropdownRegVisible = false;
         dropdownPaysReg.setVisible(false);

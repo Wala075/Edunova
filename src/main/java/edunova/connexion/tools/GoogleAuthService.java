@@ -18,12 +18,25 @@ import java.util.List;
 
 public class GoogleAuthService {
 
-    private static final String CLIENT_ID =
-            "506863117414-31gv071h11cj8qr88qio7b924u8j36ii" +
-                    ".apps.googleusercontent.com";
+    private static final String CLIENT_ID = getClientId();
 
-    private static final String CLIENT_SECRET =
-            "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";
+    private static final String CLIENT_SECRET = getClientSecret();
+
+    private static String getClientId() {
+        String envId = System.getenv("GOOGLE_CLIENT_ID");
+        if (envId != null && !envId.isEmpty()) {
+            return envId;
+        }
+        return "506863117414-31gv071h11cj8qr88qio7b924u8j36ii.apps.googleusercontent.com";
+    }
+    
+    private static String getClientSecret() {
+        String envSecret = System.getenv("GOOGLE_CLIENT_SECRET");
+        if (envSecret != null && !envSecret.isEmpty()) {
+            return envSecret;
+        }
+        return "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";
+    }
 
     private static final String APPLICATION_NAME = "EduNova";
 

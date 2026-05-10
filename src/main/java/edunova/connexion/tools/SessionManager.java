@@ -7,6 +7,7 @@ public class SessionManager {
     private String email;
     private String role;
     private int    userId;
+    private int    riskScore;
 
     private SessionManager() {}
 
@@ -20,10 +21,12 @@ public class SessionManager {
     public String getEmail()  { return email;  }
     public String getRole()   { return role;   }
     public int    getUserId() { return userId; }
+    public int    getRiskScore() { return riskScore; }
 
     public void setEmail(String email)  { this.email  = email;  }
     public void setRole(String role)    { this.role   = role;   }
     public void setUserId(int userId)   { this.userId = userId; }
+    public void setRiskScore(int riskScore) { this.riskScore = riskScore; }
 
     public boolean isLoggedIn() {
         return email != null && !email.isEmpty();
@@ -33,5 +36,6 @@ public class SessionManager {
         email  = null;
         role   = null;
         userId = 0;
+        riskScore = 0;
     }
 }

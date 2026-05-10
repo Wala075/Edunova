@@ -10,8 +10,18 @@ import java.nio.charset.StandardCharsets;
 
 public class HCaptchaService {
 
-    private static final String SECRET_KEY =
-            "ES_804bcf09368b42b7b2a91e658e7c09e6";
+    private static final String SECRET_KEY = getSecretKey();
+
+    private static String getSecretKey() {
+        // Try to load from environment variable first
+        String envKey = System.getenv("HCAPTCHA_SECRET_KEY");
+        if (envKey != null && !envKey.isEmpty()) {
+            return envKey;
+        }
+        
+        // Fallback to test key (should be in .env)
+        return "0x0000000000000000000000000000000000000000";
+    }
 
     private static final String VERIFY_URL =
             "https://hcaptcha.com/siteverify";

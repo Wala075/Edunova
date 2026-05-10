@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="edunova.connexion.controllers.RiskReportController"
+      spacing="15"
+      style="-fx-padding: 20;">
+
+    <!-- Titre -->
+    <Label text="🛡️ Rapport de Risque"
+           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+
+    <!-- Statistiques Globales -->
+    <VBox fx:id="riskReportPanel"
+          spacing="15"
+          style="-fx-background-color: #ffffff;
+                 -fx-background-radius: 10;
+                 -fx-padding: 20;
+                 -fx-border-color: #e2e8f0;
+                 -fx-border-radius: 10;
+                 -fx-border-width: 1.5;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0, 0, 2);">
+
+        <!-- Titre Stats -->
+        <Label text="📊 Statistiques Globales"
+               style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+
+        <!-- Grille de Stats - Ligne 1 -->
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <!-- Total Connexions -->
+            <VBox spacing="8"
+                  style="-fx-background-color: #f0fdf4;
+                         -fx-background-radius: 8;
+                         -fx-padding: 15;
+                         -fx-border-color: #22c55e;
+                         -fx-border-radius: 8;
+                         -fx-border-width: 1.5;"
+                  HBox.hgrow="ALWAYS">
+                <Label text="📊 Total Connexions"
+                       style="-fx-font-size: 12; -fx-text-fill: #64748b; -fx-font-weight: bold;"/>
+                <Label fx:id="lblTotalLogins" text="0"
+                       style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #16a34a;"/>
+            </VBox>
+
+            <!-- Connexions Bloquées -->
+            <VBox spacing="8"
+                  style="-fx-background-color: #fef2f2;
+                         -fx-background-radius: 8;
+                         -fx-padding: 15;
+                         -fx-border-color: #ef4444;
+                         -fx-border-radius: 8;
+                         -fx-border-width: 1.5;"
+                  HBox.hgrow="ALWAYS">
+                <Label text="🚫 Connexions Bloquées"
+                       style="-fx-font-size: 12; -fx-text-fill: #64748b; -fx-font-weight: bold;"/>
+                <Label fx:id="lblBlockedLogins" text="0"
+                       style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #ef4444;"/>
+            </VBox>
+
+            <!-- Score Moyen -->
+            <VBox spacing="8"
+                  style="-fx-background-color: #fef3c7;
+                         -fx-background-radius: 8;
+                         -fx-padding: 15;
+                         -fx-border-color: #f59e0b;
+                         -fx-border-radius: 8;
+                         -fx-border-width: 1.5;"
+                  HBox.hgrow="ALWAYS">
+                <Label text="⚠️ Score Moyen"
+                       style="-fx-font-size: 12; -fx-text-fill: #64748b; -fx-font-weight: bold;"/>
+                <Label fx:id="lblAvgRiskScore" text="0"
+                       style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #f59e0b;"/>
+            </VBox>
+        </HBox>
+
+        <!-- Grille de Stats - Ligne 2 -->
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <!-- Tentatives de Connexion -->
+            <VBox spacing="8"
+                  style="-fx-background-color: #ede9fe;
+                         -fx-background-radius: 8;
+                         -fx-padding: 15;
+                         -fx-border-color: #a78bfa;
+                         -fx-border-radius: 8;
+                         -fx-border-width: 1.5;"
+                  HBox.hgrow="ALWAYS">
+                <Label text="🔐 Tentatives Connexion"
+                       style="-fx-font-size: 12; -fx-text-fill: #64748b; -fx-font-weight: bold;"/>
+                <Label fx:id="lblConnectionAttempts" text="0"
+                       style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #a78bfa;"/>
+            </VBox>
+
+            <!-- Connexions à Risque Élevé -->
+            <VBox spacing="8"
+                  style="-fx-background-color: #fce7f3;
+                         -fx-background-radius: 8;
+                         -fx-padding: 15;
+                         -fx-border-color: #ec4899;
+                         -fx-border-radius: 8;
+                         -fx-border-width: 1.5;"
+                  HBox.hgrow="ALWAYS">
+                <Label text="⚡ Risque Élevé"
+                       style="-fx-font-size: 12; -fx-text-fill: #64748b; -fx-font-weight: bold;"/>
+                <Label fx:id="lblHighRiskConnectionsCount" text="0"
+                       style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #ec4899;"/>
+            </VBox>
+
+            <!-- Temps d'Écriture -->
+            <VBox spacing="8"
+                  style="-fx-background-color: #dbeafe;
+                         -fx-background-radius: 8;
+                         -fx-padding: 15;
+                         -fx-border-color: #0ea5e9;
+                         -fx-border-radius: 8;
+                         -fx-border-width: 1.5;"
+                  HBox.hgrow="ALWAYS">
+                <Label text="⌨️ Temps d'Écriture"
+                       style="-fx-font-size: 12; -fx-text-fill: #64748b; -fx-font-weight: bold;"/>
+                <Label fx:id="lblAvgTypingSpeed" text="N/A"
+                       style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #0ea5e9; -fx-wrap-text: true;"/>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <!-- Connexions à Risque Élevé -->
+    <VBox spacing="10"
+          style="-fx-background-color: #ffffff;
+                 -fx-background-radius: 10;
+                 -fx-padding: 20;
+                 -fx-border-color: #e2e8f0;
+                 -fx-border-radius: 10;
+                 -fx-border-width: 1.5;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0, 0, 2);">
+
+        <!-- Titre -->
+        <Label text="⚠️ Connexions à Risque Élevé (Score ≥ 60)"
+               style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+
+        <!-- Liste des Connexions -->
+        <VBox fx:id="highRiskConnectionsPanel"
+              spacing="0"
+              style="-fx-background-color: transparent;"/>
+    </VBox>
+
+</VBox>

@@ -1,6 +1,7 @@
 package edunova.connexion.controllers;
 
 import edunova.connexion.dao.UserDAO;
+import edunova.connexion.dao.RiskDAO;
 import edunova.connexion.models.User;
 import edunova.connexion.tools.SessionManager;
 
@@ -16,6 +17,7 @@ import javafx.stage.Stage;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 public class DashboardController {
 
@@ -100,9 +102,19 @@ public class DashboardController {
     @FXML private Label     lblUsersGrand;
     @FXML private Label     lblUsersSous;
     @FXML private ScrollPane scrollUsers;
+    
+    // RISK STATISTICS PANEL
+    @FXML private VBox      riskStatsPanel;
+    @FXML private HBox      riskStatsContainer;
+    @FXML private Label     lblRiskStatsTitle;
+    @FXML private Label     lblRiskStatsSub;
 
     private final UserDAO dao    = new UserDAO();
-    private       boolean isDark = true;
+    private final RiskDAO riskDAO = new RiskDAO();
+    private       boolean isDark = false;
+    
+    // Instance statique pour accès global
+    private static DashboardController instance;
 
 
     //  COULEURS THÈMES
@@ -137,6 +149,7 @@ public class DashboardController {
     //  INITIALISATION
     @FXML
     public void initialize() {
+        instance = this;
         configurerSession();
         configurerDate();
         appliquerTheme();
@@ -394,6 +407,7 @@ public class DashboardController {
 
         // Rafraîchir les cartes
         chargerTousUsers();
+        applyThemeToRiskStats();
         afficherCartesDerniers(dao.findAll().stream().limit(5).toList());
     }
 
@@ -538,6 +552,7 @@ public class DashboardController {
     //  Cartes utilisateurs
     private void chargerTousUsers() {
         afficherCartes(dao.findAll());
+        afficherStatistiquesRisque();
     }
 
     private void afficherCartes(List<User> users) {
@@ -546,6 +561,332 @@ public class DashboardController {
             lblCompteurUsers.setText(users.size() + " utilisateur(s)");
         for (User u : users)
             flowCartes.getChildren().add(creerCarte(u));
+    }
+
+    /**
+     * Affiche les statistiques de risque globales dans le panneau des utilisateurs
+     */
+    private void afficherStatistiquesRisque() {
+        try {
+            Map<String, Object> stats = riskDAO.getGlobalRiskStatistics();
+            
+            riskStatsContainer.getChildren().clear();
+            
+            String bgCard   = isDark ? "#1a1a2e" : "#ffffff";
+            String textMain = isDark ? "#e2e8f0" : "#1e293b";
+            String textSub  = isDark ? "#64748b"  : "#94a3b8";
+            
+            // Stat 1: Total Connexions
+            VBox stat1 = creerStatCard(
+                "👥",
+                "Total Connexions",
+                String.valueOf(stats.getOrDefault("totalLogins", 0)),
+                "#7c3aed",
+                bgCard, textMain, textSub
+            );
+            stat1.setOnMouseClicked(e -> afficherRapportStatistique("Total Connexions", stats));
+            
+            // Stat 2: Connexions Bloquées
+            VBox stat2 = creerStatCard(
+                "🚫",
+                "Bloquées",
+                String.valueOf(stats.getOrDefault("blockedLogins", 0)),
+                "#ef4444",
+                bgCard, textMain, textSub
+            );
+            stat2.setOnMouseClicked(e -> afficherRapportStatistique("Connexions Bloquées", stats));
+            
+            // Stat 3: Score de la Tentative
+            double avgScore = (double) stats.getOrDefault("avgRiskScore", 0.0);
+            String avgScoreStr = String.format("%.1f", avgScore);
+            VBox stat3 = creerStatCard(
+                "📊",
+                "Score Tentative",
+                avgScoreStr + "/100",
+                "#f59e0b",
+                bgCard, textMain, textSub
+            );
+            stat3.setOnMouseClicked(e -> afficherRapportStatistique("Score Tentative", stats));
+            
+            // Stat 4: Tentatives de Connexion Échouées
+            VBox stat4 = creerStatCard(
+                "❌",
+                "Tentatives Échouées",
+                String.valueOf(stats.getOrDefault("failedAttempts", 0)),
+                "#10b981",
+                bgCard, textMain, textSub
+            );
+            stat4.setOnMouseClicked(e -> afficherRapportStatistique("Tentatives Échouées", stats));
+            
+            // Stat 5: Connexions à Risque Élevé
+            VBox stat5 = creerStatCard(
+                "⚠️",
+                "Risque Élevé",
+                String.valueOf(stats.getOrDefault("highRiskCount", 0)),
+                "#f87171",
+                bgCard, textMain, textSub
+            );
+            stat5.setOnMouseClicked(e -> afficherRapportStatistique("Risque Élevé", stats));
+            
+            // Stat 6: Dernière Connexion
+            String lastConnection = (String) stats.getOrDefault("lastConnectionTime", "N/A");
+            VBox stat6 = creerStatCard(
+                "🕐",
+                "Dernière",
+                lastConnection,
+                "#0ea5e9",
+                bgCard, textMain, textSub
+            );
+            stat6.setOnMouseClicked(e -> afficherRapportStatistique("Dernière Connexion", stats));
+            
+            riskStatsContainer.getChildren().addAll(stat1, stat2, stat3, stat4, stat5, stat6);
+            
+            // Appliquer le thème
+            applyThemeToRiskStats();
+            
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement des statistiques de risque: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Rafraîchit les statistiques de risque en temps réel
+     */
+    public void rafraichirStatistiquesRisque() {
+        afficherStatistiquesRisque();
+    }
+    
+    /**
+     * Méthode statique pour rafraîchir les statistiques depuis n'importe où
+     */
+    public static void rafraichirStatistiquesGlobales() {
+        if (instance != null) {
+            instance.rafraichirStatistiquesRisque();
+        }
+    }
+    
+    /**
+     * Affiche un rapport détaillé pour une statistique cliquée
+     */
+    private void afficherRapportStatistique(String nomStat, Map<String, Object> stats) {
+        try {
+            Stage reportStage = new Stage();
+            reportStage.setTitle("Rapport - " + nomStat);
+            reportStage.initModality(Modality.APPLICATION_MODAL);
+            
+            VBox reportContent = new VBox(15);
+            reportContent.setPadding(new javafx.geometry.Insets(20));
+            reportContent.setStyle(
+                "-fx-background-color: " + (isDark ? "#0f0f1a" : "#f1f5f9") + ";"
+            );
+            
+            // Titre du rapport
+            Label lblTitre = new Label("📊 " + nomStat);
+            lblTitre.setStyle(
+                "-fx-font-size: 20; -fx-font-weight: bold;" +
+                "-fx-text-fill: " + (isDark ? "#e2e8f0" : "#1e293b") + ";"
+            );
+            
+            // Contenu du rapport selon le type de statistique
+            VBox contenuRapport = new VBox(10);
+            contenuRapport.setStyle(
+                "-fx-background-color: " + (isDark ? "#1a1a2e" : "#ffffff") + ";" +
+                "-fx-background-radius: 10; -fx-padding: 15;" +
+                "-fx-border-color: " + (isDark ? "#2d2d4e" : "#e2e8f0") + ";" +
+                "-fx-border-radius: 10; -fx-border-width: 1;"
+            );
+            
+            String textMain = isDark ? "#e2e8f0" : "#1e293b";
+            String textSub = isDark ? "#64748b" : "#94a3b8";
+            
+            switch (nomStat) {
+                case "Total Connexions" -> {
+                    int total = (int) stats.getOrDefault("totalLogins", 0);
+                    int blocked = (int) stats.getOrDefault("blockedLogins", 0);
+                    int successful = total - blocked;
+                    
+                    ajouterLigneRapport(contenuRapport, "Total des connexions", String.valueOf(total), textMain, textSub);
+                    ajouterLigneRapport(contenuRapport, "Connexions réussies", String.valueOf(successful), "#10b981", textSub);
+                    ajouterLigneRapport(contenuRapport, "Connexions bloquées", String.valueOf(blocked), "#ef4444", textSub);
+                    
+                    double pourcentageReussi = total > 0 ? (successful * 100.0 / total) : 0;
+                    ajouterLigneRapport(contenuRapport, "Taux de réussite", String.format("%.1f%%", pourcentageReussi), "#7c3aed", textSub);
+                }
+                case "Connexions Bloquées" -> {
+                    int blocked = (int) stats.getOrDefault("blockedLogins", 0);
+                    int highRisk = (int) stats.getOrDefault("highRiskCount", 0);
+                    
+                    ajouterLigneRapport(contenuRapport, "Connexions bloquées", String.valueOf(blocked), "#ef4444", textSub);
+                    ajouterLigneRapport(contenuRapport, "Connexions à risque élevé", String.valueOf(highRisk), "#f87171", textSub);
+                    ajouterLigneRapport(contenuRapport, "Raison", "Score de risque trop élevé", textSub, textSub);
+                }
+                case "Score Tentative" -> {
+                    double avgScore = (double) stats.getOrDefault("avgRiskScore", 0.0);
+                    String scoreStr = String.format("%.1f", avgScore);
+                    
+                    ajouterLigneRapport(contenuRapport, "Score moyen", scoreStr + "/100", "#f59e0b", textSub);
+                    
+                    String niveau;
+                    String couleur;
+                    if (avgScore < 30) {
+                        niveau = "Faible";
+                        couleur = "#10b981";
+                    } else if (avgScore < 60) {
+                        niveau = "Moyen";
+                        couleur = "#f59e0b";
+                    } else {
+                        niveau = "Élevé";
+                        couleur = "#ef4444";
+                    }
+                    ajouterLigneRapport(contenuRapport, "Niveau de risque", niveau, couleur, textSub);
+                }
+                case "Tentatives Échouées" -> {
+                    int failed = (int) stats.getOrDefault("failedAttempts", 0);
+                    int total = (int) stats.getOrDefault("totalLogins", 0);
+                    
+                    ajouterLigneRapport(contenuRapport, "Tentatives échouées", String.valueOf(failed), "#ef4444", textSub);
+                    ajouterLigneRapport(contenuRapport, "Total des tentatives", String.valueOf(total), textMain, textSub);
+                    
+                    double pourcentageEchec = total > 0 ? (failed * 100.0 / total) : 0;
+                    ajouterLigneRapport(contenuRapport, "Taux d'échec", String.format("%.1f%%", pourcentageEchec), "#ef4444", textSub);
+                }
+                case "Risque Élevé" -> {
+                    int highRisk = (int) stats.getOrDefault("highRiskCount", 0);
+                    int total = (int) stats.getOrDefault("totalLogins", 0);
+                    
+                    ajouterLigneRapport(contenuRapport, "Connexions à risque élevé", String.valueOf(highRisk), "#f87171", textSub);
+                    ajouterLigneRapport(contenuRapport, "Total des connexions", String.valueOf(total), textMain, textSub);
+                    
+                    double pourcentageRisque = total > 0 ? (highRisk * 100.0 / total) : 0;
+                    ajouterLigneRapport(contenuRapport, "Pourcentage", String.format("%.1f%%", pourcentageRisque), "#f87171", textSub);
+                }
+                case "Dernière Connexion" -> {
+                    String lastConnection = (String) stats.getOrDefault("lastConnectionTime", "N/A");
+                    ajouterLigneRapport(contenuRapport, "Dernière connexion", lastConnection, textMain, textSub);
+                    ajouterLigneRapport(contenuRapport, "Statut", "Mise à jour en temps réel", "#10b981", textSub);
+                }
+            }
+            
+            ScrollPane scrollRapport = new ScrollPane(contenuRapport);
+            scrollRapport.setStyle("-fx-background: transparent; -fx-border-color: transparent;");
+            scrollRapport.setFitToWidth(true);
+            
+            // Bouton fermer
+            Button btnFermer = new Button("Fermer");
+            btnFermer.setStyle(
+                "-fx-background-color: #7c3aed; -fx-text-fill: white;" +
+                "-fx-font-size: 13; -fx-padding: 10 20;" +
+                "-fx-background-radius: 8; -fx-cursor: hand;"
+            );
+            btnFermer.setOnAction(e -> reportStage.close());
+            
+            HBox hboxBouton = new HBox();
+            hboxBouton.setAlignment(Pos.CENTER_RIGHT);
+            hboxBouton.getChildren().add(btnFermer);
+            
+            reportContent.getChildren().addAll(lblTitre, scrollRapport, hboxBouton);
+            
+            Scene scene = new Scene(reportContent, 500, 400);
+            reportStage.setScene(scene);
+            reportStage.show();
+            
+        } catch (Exception e) {
+            System.err.println("Erreur lors de l'affichage du rapport: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Ajoute une ligne au rapport détaillé
+     */
+    private void ajouterLigneRapport(VBox parent, String label, String valeur, String couleurValeur, String textSub) {
+        HBox ligne = new HBox(15);
+        ligne.setAlignment(Pos.CENTER_LEFT);
+        
+        Label lblLabel = new Label(label + ":");
+        lblLabel.setStyle(
+            "-fx-font-size: 12; -fx-text-fill: " + textSub + ";"
+        );
+        lblLabel.setPrefWidth(150);
+        
+        Label lblValeur = new Label(valeur);
+        lblValeur.setStyle(
+            "-fx-font-size: 14; -fx-font-weight: bold;" +
+            "-fx-text-fill: " + couleurValeur + ";"
+        );
+        
+        ligne.getChildren().addAll(lblLabel, lblValeur);
+        parent.getChildren().add(ligne);
+    }
+
+    /**
+     * Crée une carte de statistique
+     */
+    private VBox creerStatCard(String emoji, String titre, String valeur, 
+                               String couleur, String bgCard, String textMain, String textSub) {
+        VBox card = new VBox(8);
+        card.setPrefWidth(160);
+        card.setMaxWidth(160);
+        card.setStyle(
+            "-fx-background-color: " + bgCard + ";" +
+            "-fx-background-radius: 10;" +
+            "-fx-padding: 15;" +
+            "-fx-border-color: " + couleur + ";" +
+            "-fx-border-radius: 10;" +
+            "-fx-border-width: 1;"
+        );
+        card.setAlignment(Pos.TOP_LEFT);
+        
+        Label lblEmoji = new Label(emoji);
+        lblEmoji.setStyle("-fx-font-size: 24;");
+        
+        Label lblTitre = new Label(titre);
+        lblTitre.setStyle(
+            "-fx-font-size: 11;" +
+            "-fx-text-fill: " + textSub + ";"
+        );
+        
+        Label lblValeur = new Label(valeur);
+        lblValeur.setStyle(
+            "-fx-font-size: 18;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: " + couleur + ";"
+        );
+        lblValeur.setWrapText(true);
+        
+        card.getChildren().addAll(lblEmoji, lblTitre, lblValeur);
+        return card;
+    }
+
+    /**
+     * Applique le thème aux statistiques de risque
+     */
+    private void applyThemeToRiskStats() {
+        String bgCard   = isDark ? "#1a1a2e" : "#ffffff";
+        String textMain = isDark ? "#e2e8f0" : "#1e293b";
+        String textSub  = isDark ? "#64748b"  : "#94a3b8";
+        String borderColor = isDark ? "#2d2d4e" : "#e2e8f0";
+        
+        riskStatsPanel.setStyle(
+            "-fx-background-color: " + bgCard + ";" +
+            "-fx-background-radius: 12;" +
+            "-fx-padding: 20;" +
+            "-fx-border-color: " + borderColor + ";" +
+            "-fx-border-radius: 12;" +
+            "-fx-border-width: 1;"
+        );
+        
+        lblRiskStatsTitle.setStyle(
+            "-fx-font-size: 16;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: " + textMain + ";"
+        );
+        
+        lblRiskStatsSub.setStyle(
+            "-fx-font-size: 11;" +
+            "-fx-text-fill: " + textSub + ";"
+        );
     }
 
     private VBox creerCarte(User u) {

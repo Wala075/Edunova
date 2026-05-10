@@ -14,97 +14,43 @@
 <HBox xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="edunova.connexion.controllers.LoginController"
-      prefWidth="980" prefHeight="660">
+      prefWidth="1000" prefHeight="660"
+      spacing="0">
 
    <!-- ══ SIDEBAR GAUCHE ══ -->
-   <VBox prefWidth="320" prefHeight="660"
-         alignment="CENTER"
-         style="-fx-background-color: #6d28d9;
-                 -fx-padding: 40 28;">
+   <StackPane prefWidth="450" prefHeight="660">
+      <!-- Background layer -->
+      <VBox fx:id="sidebarLogin" prefWidth="450" prefHeight="660"/>
+      
+      <!-- Content layer with semi-transparent overlay -->
+      <VBox prefWidth="450" prefHeight="660"
+            alignment="TOP_CENTER"
+            style="-fx-background-color: transparent;
+                    -fx-padding: 0 0 0 0;">
 
-      <VBox alignment="CENTER" spacing="10">
+      <VBox alignment="TOP_CENTER" spacing="8" style="-fx-padding: 30 20 0 20;">
          <StackPane alignment="CENTER"
                     style="-fx-background-color: rgba(255,255,255,0.18);
                               -fx-background-radius: 50;
-                              -fx-min-width: 82; -fx-min-height: 82;
-                              -fx-max-width: 82; -fx-max-height: 82;">
-            <Label text="🎓" style="-fx-font-size: 38;"/>
+                              -fx-min-width: 70; -fx-min-height: 70;
+                              -fx-max-width: 70; -fx-max-height: 70;">
+            <Label text="🎓" style="-fx-font-size: 32;"/>
          </StackPane>
          <Label text="EduNova"
-                style="-fx-font-size: 32; -fx-font-weight: bold;
+                style="-fx-font-size: 28; -fx-font-weight: bold;
                           -fx-text-fill: white;"/>
-         <Label text="Plateforme de gestion scolaire"
-                style="-fx-font-size: 12;
+         <Label text="   "
+                style="-fx-font-size: 11;
                           -fx-text-fill: rgba(255,255,255,0.75);
                           -fx-wrap-text: true;
                           -fx-text-alignment: center;"
                 maxWidth="210"/>
       </VBox>
 
-      <Region prefHeight="35"/>
-
-      <VBox spacing="18">
-         <HBox spacing="14" alignment="CENTER_LEFT">
-            <StackPane alignment="CENTER"
-                       style="-fx-background-color: rgba(255,255,255,0.18);
-                                  -fx-background-radius: 10;
-                                  -fx-min-width: 42; -fx-min-height: 42;
-                                  -fx-max-width: 42; -fx-max-height: 42;">
-               <Label text="📊" style="-fx-font-size: 19;"/>
-            </StackPane>
-            <VBox spacing="2">
-               <Label text="Tableau de bord"
-                      style="-fx-font-size: 13; -fx-font-weight: bold;
-                                  -fx-text-fill: white;"/>
-               <Label text="Statistiques en temps réel"
-                      style="-fx-font-size: 11;
-                                  -fx-text-fill: rgba(255,255,255,0.65);"/>
-            </VBox>
-         </HBox>
-
-         <HBox spacing="14" alignment="CENTER_LEFT">
-            <StackPane alignment="CENTER"
-                       style="-fx-background-color: rgba(255,255,255,0.18);
-                                  -fx-background-radius: 10;
-                                  -fx-min-width: 42; -fx-min-height: 42;
-                                  -fx-max-width: 42; -fx-max-height: 42;">
-               <Label text="👥" style="-fx-font-size: 19;"/>
-            </StackPane>
-            <VBox spacing="2">
-               <Label text="Gestion des utilisateurs"
-                      style="-fx-font-size: 13; -fx-font-weight: bold;
-                                  -fx-text-fill: white;"/>
-               <Label text="Admins, enseignants, étudiants"
-                      style="-fx-font-size: 11;
-                                  -fx-text-fill: rgba(255,255,255,0.65);"/>
-            </VBox>
-         </HBox>
-
-         <HBox spacing="14" alignment="CENTER_LEFT">
-            <StackPane alignment="CENTER"
-                       style="-fx-background-color: rgba(255,255,255,0.18);
-                                  -fx-background-radius: 10;
-                                  -fx-min-width: 42; -fx-min-height: 42;
-                                  -fx-max-width: 42; -fx-max-height: 42;">
-               <Label text="🔐" style="-fx-font-size: 19;"/>
-            </StackPane>
-            <VBox spacing="2">
-               <Label text="Sécurité avancée"
-                      style="-fx-font-size: 13; -fx-font-weight: bold;
-                                  -fx-text-fill: white;"/>
-               <Label text="Authentification sécurisée"
-                      style="-fx-font-size: 11;
-                                  -fx-text-fill: rgba(255,255,255,0.65);"/>
-            </VBox>
-         </HBox>
-      </VBox>
-
       <Region VBox.vgrow="ALWAYS"/>
 
-      <Label text="© 2026 EduNova · Tous droits réservés"
-             style="-fx-font-size: 10;
-                      -fx-text-fill: rgba(255,255,255,0.45);"/>
-   </VBox>
+      </VBox>
+   </StackPane>
 
    <!-- ══ PANNEAU DROIT ══ -->
    <ScrollPane HBox.hgrow="ALWAYS" fitToWidth="true"
@@ -184,48 +130,76 @@
 
             <Region prefHeight="8"/>
 
-            <!-- hCaptcha -->
-            <VBox spacing="7"
+            <!-- Captcha Mathématique -->
+            <VBox spacing="8"
                   style="-fx-background-color: #f8fafc;
-             -fx-background-radius: 10;
-             -fx-padding: 12;
-             -fx-border-color: #e2e8f0;
-             -fx-border-radius: 10;
-             -fx-border-width: 1.5;">
+                         -fx-background-radius: 10;
+                         -fx-padding: 12;
+                         -fx-border-color: #e2e8f0;
+                         -fx-border-radius: 10;
+                         -fx-border-width: 1.5;">
+               
+               <!-- Checkbox "Je ne suis pas un robot" -->
                <HBox alignment="CENTER_LEFT" spacing="10">
-                  <Label text="🛡️" style="-fx-font-size: 15;"/>
+                  <CheckBox fx:id="chkCaptcha"
+                            onAction="#handleCaptchaCheckbox"
+                            style="-fx-cursor: hand;"/>
                   <VBox spacing="1">
+                     <Label text="Je ne suis pas un robot"
+                            style="-fx-font-size: 12;
+                                   -fx-font-weight: bold;
+                                   -fx-text-fill: #1e293b;"/>
                      <Label text="Vérification de sécurité"
-                            style="-fx-font-size: 13;
-                          -fx-font-weight: bold;
-                          -fx-text-fill: #1e293b;"/>
-                     <Label text="Confirmez que vous n'êtes pas un robot"
                             style="-fx-font-size: 10;
-                          -fx-text-fill: #94a3b8;"/>
+                                   -fx-text-fill: #94a3b8;"/>
                   </VBox>
-                  <Region HBox.hgrow="ALWAYS"/>
-                  <Label fx:id="lblCaptchaStatut" text=""
-                         style="-fx-font-size: 11;"/>
                </HBox>
 
-               <Button fx:id="btnOuvrirCaptcha"
-                       text="  Cliquez pour vérifier"
-                       onAction="#handleOuvrirCaptcha"
-                       maxWidth="Infinity"
-                       style="-fx-background-color: white;
-                   -fx-text-fill: #374151;
-                   -fx-font-size: 12;
-                   -fx-font-weight: bold;
-                   -fx-background-radius: 8;
-                   -fx-padding: 10;
-                   -fx-border-color: #e2e8f0;
-                   -fx-border-radius: 8;
-                   -fx-border-width: 1.5;
-                   -fx-cursor: hand;"/>
+               <!-- Question Captcha (caché par défaut) -->
+               <VBox fx:id="vboxCaptchaQuestion"
+                     visible="false" managed="false"
+                     spacing="8"
+                     style="-fx-background-color: white;
+                            -fx-background-radius: 8;
+                            -fx-padding: 12;
+                            -fx-border-color: #7c3aed;
+                            -fx-border-radius: 8;
+                            -fx-border-width: 2;">
+                  
+                  <Label fx:id="lblCaptchaQuestion"
+                         text="2 + 3 = ?"
+                         style="-fx-font-size: 14;
+                                -fx-font-weight: bold;
+                                -fx-text-fill: #1e293b;"/>
+                  
+                  <TextField fx:id="txtCaptchaReponse"
+                             promptText="Votre réponse..."
+                             style="-fx-background-color: #f8fafc;
+                                    -fx-text-fill: #1e293b;
+                                    -fx-prompt-text-fill: #94a3b8;
+                                    -fx-background-radius: 8;
+                                    -fx-padding: 10;
+                                    -fx-border-color: #e2e8f0;
+                                    -fx-border-radius: 8;
+                                    -fx-border-width: 1.5;
+                                    -fx-font-size: 12;"/>
+                  
+                  <Button fx:id="btnVerifierCaptcha"
+                          text="Vérifier"
+                          onAction="#handleVerifierCaptcha"
+                          maxWidth="Infinity"
+                          style="-fx-background-color: #7c3aed;
+                                 -fx-text-fill: white;
+                                 -fx-font-weight: bold;
+                                 -fx-font-size: 12;
+                                 -fx-background-radius: 8;
+                                 -fx-padding: 10;
+                                 -fx-cursor: hand;"/>
+               </VBox>
 
                <Label fx:id="errCaptcha" text=""
                       style="-fx-text-fill: #ef4444;
-                  -fx-font-size: 11;"/>
+                             -fx-font-size: 11;"/>
             </VBox>
 
 
@@ -449,26 +423,6 @@
 
             <Region prefHeight="9"/>
 
-            <!-- Rôle -->
-            <VBox spacing="4">
-               <Label text="Rôle *"
-                      style="-fx-font-size: 12; -fx-font-weight: bold;
-                                  -fx-text-fill: #374151;"/>
-               <ComboBox fx:id="cbRegRole"
-                         maxWidth="Infinity" prefWidth="99999"
-                         promptText="Sélectionner votre rôle"
-                         style="-fx-background-color: #f8fafc;
-                                     -fx-background-radius: 10;
-                                     -fx-border-color: #e2e8f0;
-                                     -fx-border-radius: 10;
-                                     -fx-border-width: 1.5;
-                                     -fx-font-size: 12;"/>
-               <Label fx:id="errRegRole" text=""
-                      style="-fx-text-fill: #ef4444; -fx-font-size: 10;"/>
-            </VBox>
-
-            <Region prefHeight="9"/>
-
             <!-- Mot de passe / Confirmer -->
             <HBox spacing="14">
                <VBox HBox.hgrow="ALWAYS" spacing="4">
@@ -478,14 +432,14 @@
                   <PasswordField fx:id="txtRegPassword"
                                  promptText="Min. 6 car."
                                  style="-fx-background-color: #f8fafc;
-                                              -fx-text-fill: #1e293b;
-                                              -fx-prompt-text-fill: #94a3b8;
-                                              -fx-background-radius: 10;
-                                              -fx-padding: 10 12;
-                                              -fx-border-color: #e2e8f0;
-                                              -fx-border-radius: 10;
-                                              -fx-border-width: 1.5;
-                                              -fx-font-size: 12;"/>
+                                             -fx-text-fill: #1e293b;
+                                             -fx-prompt-text-fill: #94a3b8;
+                                             -fx-background-radius: 10;
+                                             -fx-padding: 10 12;
+                                             -fx-border-color: #e2e8f0;
+                                             -fx-border-radius: 10;
+                                             -fx-border-width: 1.5;
+                                             -fx-font-size: 12;"/>
                   <Label fx:id="errRegPassword" text=""
                          style="-fx-text-fill: #ef4444; -fx-font-size: 10;"/>
                </VBox>

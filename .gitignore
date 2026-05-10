@@ -41,6 +41,7 @@ build/
 
 # Secrets
 src/main/resources/config.properties
+.env
 
 # Maven
 target/

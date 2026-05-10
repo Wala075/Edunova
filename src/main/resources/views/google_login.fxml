@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.web.WebView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="edunova.connexion.controllers.GoogleLoginController"
+      prefWidth="600" prefHeight="700"
+      style="-fx-background-color: #f1f5f9;">
+    
+    <WebView fx:id="webView" VBox.vgrow="ALWAYS"/>
+    
+</VBox>

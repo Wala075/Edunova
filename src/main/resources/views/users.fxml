@@ -58,6 +58,21 @@
                 </columns>
             </TableView>
 
+            <!-- Rapport de Score de Risque -->
+            <TitledPane text="📊 Rapport de Score de Risque" expanded="true">
+                <VBox spacing="12" style="-fx-padding: 12;">
+                    <!-- Statistiques de Risque par Utilisateur -->
+                    <VBox fx:id="riskScorePanel"
+                          spacing="10"
+                          style="-fx-background-color: #ffffff;
+                                 -fx-background-radius: 8;
+                                 -fx-padding: 15;
+                                 -fx-border-color: #e2e8f0;
+                                 -fx-border-radius: 8;
+                                 -fx-border-width: 1;"/>
+                </VBox>
+            </TitledPane>
+
             <!-- Formulaire -->
             <TitledPane text="Formulaire utilisateur" expanded="true">
                 <GridPane hgap="12" vgap="10">
