@@ -48,6 +48,8 @@ public class DashboardController {
     @FXML private Button btnMenuEtudiants;
     @FXML private Button btnMenuEnseignants;
     @FXML private Button btnMenuClasses;
+    @FXML private Button btnMenuEvenement;
+    @FXML private Button btnMenuForum;
 
     // NAVBAR
     @FXML private HBox      navbar;
@@ -61,6 +63,10 @@ public class DashboardController {
     // PAGES
     @FXML private ScrollPane pageDashboard;
     @FXML private VBox       pageUsers;
+    @FXML private VBox       pageEtudiants;
+    @FXML private VBox       pageEnseignants;
+    @FXML private VBox       pageEvenement;
+    @FXML private VBox       pageForum;
     @FXML private VBox       dashContent;
 
     //  STATS LABELS
@@ -108,6 +114,31 @@ public class DashboardController {
     @FXML private HBox      riskStatsContainer;
     @FXML private Label     lblRiskStatsTitle;
     @FXML private Label     lblRiskStatsSub;
+
+    // PAGE ETUDIANTS
+    @FXML private VBox      etudientsContent;
+    @FXML private FlowPane  flowEtudiants;
+    @FXML private Label     lblCompteurEtudiants;
+    @FXML private TextField txtRechercheEtudiants;
+    @FXML private Label     lblEtudiantsGrand;
+    @FXML private Label     lblEtudiantsSous;
+    @FXML private HBox      statsEtudiantsPanel;
+
+    // PAGE ENSEIGNANTS
+    @FXML private FlowPane  flowEnseignants;
+    @FXML private Label     lblCompteurEnseignants;
+    @FXML private TextField txtRechercheEnseignants;
+    @FXML private Label     lblEnseignantsGrand;
+    @FXML private Label     lblEnseignantsSous;
+    @FXML private HBox      statsEnseignantsPanel;
+
+    // PAGE EVENEMENT
+    @FXML private Label     lblEvenementGrand;
+    @FXML private Label     lblEvenementSous;
+
+    // PAGE FORUM
+    @FXML private Label     lblForumGrand;
+    @FXML private Label     lblForumSous;
 
     private final UserDAO dao    = new UserDAO();
     private final RiskDAO riskDAO = new RiskDAO();
@@ -409,6 +440,64 @@ public class DashboardController {
         chargerTousUsers();
         applyThemeToRiskStats();
         afficherCartesDerniers(dao.findAll().stream().limit(5).toList());
+
+        // PAGE ETUDIANTS
+        pageEtudiants.setStyle(
+                "-fx-background-color: " + bgMain + "; -fx-padding: 25;");
+        lblEtudiantsGrand.setStyle(
+                "-fx-font-size: 22; -fx-font-weight: bold;" +
+                        "-fx-text-fill: " + textMain + ";");
+        lblEtudiantsSous.setStyle(
+                "-fx-font-size: 12; -fx-text-fill: " + textSub + ";");
+        lblCompteurEtudiants.setStyle(
+                "-fx-text-fill: " + textSub + "; -fx-font-size: 12;");
+        txtRechercheEtudiants.setStyle(
+                "-fx-background-color: " + bgCard + ";" +
+                        "-fx-text-fill: " + textMain + ";" +
+                        "-fx-prompt-text-fill: " + textSub + ";" +
+                        "-fx-background-radius: 8; -fx-padding: 9 15;" +
+                        "-fx-border-color: " + border + "; -fx-border-radius: 8;");
+        flowEtudiants.setStyle(
+                "-fx-background-color: " + bgMain + "; -fx-padding: 5;");
+        applyThemeToEtudiantsStats();
+
+        // PAGE ENSEIGNANTS
+        pageEnseignants.setStyle(
+                "-fx-background-color: " + bgMain + "; -fx-padding: 25;");
+        lblEnseignantsGrand.setStyle(
+                "-fx-font-size: 22; -fx-font-weight: bold;" +
+                        "-fx-text-fill: " + textMain + ";");
+        lblEnseignantsSous.setStyle(
+                "-fx-font-size: 12; -fx-text-fill: " + textSub + ";");
+        lblCompteurEnseignants.setStyle(
+                "-fx-text-fill: " + textSub + "; -fx-font-size: 12;");
+        txtRechercheEnseignants.setStyle(
+                "-fx-background-color: " + bgCard + ";" +
+                        "-fx-text-fill: " + textMain + ";" +
+                        "-fx-prompt-text-fill: " + textSub + ";" +
+                        "-fx-background-radius: 8; -fx-padding: 9 15;" +
+                        "-fx-border-color: " + border + "; -fx-border-radius: 8;");
+        flowEnseignants.setStyle(
+                "-fx-background-color: " + bgMain + "; -fx-padding: 5;");
+        applyThemeToEnseignantsStats();
+
+        // PAGE EVENEMENT
+        pageEvenement.setStyle(
+                "-fx-background-color: " + bgMain + "; -fx-padding: 25;");
+        lblEvenementGrand.setStyle(
+                "-fx-font-size: 22; -fx-font-weight: bold;" +
+                        "-fx-text-fill: " + textMain + ";");
+        lblEvenementSous.setStyle(
+                "-fx-font-size: 12; -fx-text-fill: " + textSub + ";");
+
+        // PAGE FORUM
+        pageForum.setStyle(
+                "-fx-background-color: " + bgMain + "; -fx-padding: 25;");
+        lblForumGrand.setStyle(
+                "-fx-font-size: 22; -fx-font-weight: bold;" +
+                        "-fx-text-fill: " + textMain + ";");
+        lblForumSous.setStyle(
+                "-fx-font-size: 12; -fx-text-fill: " + textSub + ";");
     }
 
     // Mettre à jour le fond des emojis
@@ -553,6 +642,160 @@ public class DashboardController {
     private void chargerTousUsers() {
         afficherCartes(dao.findAll());
         afficherStatistiquesRisque();
+    }
+
+    //  Cartes étudiants
+    private void chargerTousEtudiants() {
+        afficherCartesEtudiants(dao.findStudents());
+        afficherStatistiquesEtudiants();
+    }
+
+    private void afficherCartesEtudiants(List<User> etudiants) {
+        flowEtudiants.getChildren().clear();
+        if (lblCompteurEtudiants != null)
+            lblCompteurEtudiants.setText(etudiants.size() + " étudiant(s)");
+        for (User e : etudiants)
+            flowEtudiants.getChildren().add(creerCarte(e));
+    }
+
+    private void afficherStatistiquesEtudiants() {
+        try {
+            int totalEtudiants = dao.countStudents();
+            int actifs = dao.countActiveStudents();
+            int inactifs = dao.countInactiveStudents();
+            
+            statsEtudiantsPanel.getChildren().clear();
+            
+            String bgCard   = isDark ? "#1a1a2e" : "#ffffff";
+            String textMain = isDark ? "#e2e8f0" : "#1e293b";
+            String textSub  = isDark ? "#64748b"  : "#94a3b8";
+            
+            // Stat 1: Total Etudiants
+            VBox stat1 = creerStatCard(
+                "🎓",
+                "Total Etudiants",
+                String.valueOf(totalEtudiants),
+                "#10b981",
+                bgCard, textMain, textSub
+            );
+            
+            // Stat 2: Actifs
+            VBox stat2 = creerStatCard(
+                "✅",
+                "Etudiants Actifs",
+                String.valueOf(actifs),
+                "#22c55e",
+                bgCard, textMain, textSub
+            );
+            
+            // Stat 3: Inactifs
+            VBox stat3 = creerStatCard(
+                "❌",
+                "Etudiants Inactifs",
+                String.valueOf(inactifs),
+                "#f87171",
+                bgCard, textMain, textSub
+            );
+            
+            statsEtudiantsPanel.getChildren().addAll(stat1, stat2, stat3);
+            applyThemeToEtudiantsStats();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void applyThemeToEtudiantsStats() {
+        String bgCard   = isDark ? "#1a1a2e" : "#ffffff";
+        String border   = isDark ? "#2d2d4e" : "#e2e8f0";
+        String textMain = isDark ? "#e2e8f0" : "#1e293b";
+        
+        for (javafx.scene.Node node : statsEtudiantsPanel.getChildren()) {
+            if (node instanceof VBox vbox) {
+                vbox.setStyle("-fx-background-color: " + bgCard + ";" +
+                        "-fx-background-radius: 12;" +
+                        "-fx-padding: 20;" +
+                        "-fx-border-color: " + border + ";" +
+                        "-fx-border-radius: 12;" +
+                        "-fx-border-width: 1;");
+            }
+        }
+    }
+
+    //  Cartes enseignants
+    private void chargerTousEnseignants() {
+        afficherCartesEnseignants(dao.findTeachers());
+        afficherStatistiquesEnseignants();
+    }
+
+    private void afficherCartesEnseignants(List<User> enseignants) {
+        flowEnseignants.getChildren().clear();
+        if (lblCompteurEnseignants != null)
+            lblCompteurEnseignants.setText(enseignants.size() + " enseignant(s)");
+        for (User e : enseignants)
+            flowEnseignants.getChildren().add(creerCarte(e));
+    }
+
+    private void afficherStatistiquesEnseignants() {
+        try {
+            int totalEnseignants = dao.countTeachers();
+            int actifs = dao.countActiveTeachers();
+            int inactifs = dao.countInactiveTeachers();
+            
+            statsEnseignantsPanel.getChildren().clear();
+            
+            String bgCard   = isDark ? "#1a1a2e" : "#ffffff";
+            String textMain = isDark ? "#e2e8f0" : "#1e293b";
+            String textSub  = isDark ? "#64748b"  : "#94a3b8";
+            
+            // Stat 1: Total Enseignants
+            VBox stat1 = creerStatCard(
+                "👨‍🏫",
+                "Total Enseignants",
+                String.valueOf(totalEnseignants),
+                "#0ea5e9",
+                bgCard, textMain, textSub
+            );
+            
+            // Stat 2: Actifs
+            VBox stat2 = creerStatCard(
+                "✅",
+                "Enseignants Actifs",
+                String.valueOf(actifs),
+                "#22c55e",
+                bgCard, textMain, textSub
+            );
+            
+            // Stat 3: Inactifs
+            VBox stat3 = creerStatCard(
+                "❌",
+                "Enseignants Inactifs",
+                String.valueOf(inactifs),
+                "#f87171",
+                bgCard, textMain, textSub
+            );
+            
+            statsEnseignantsPanel.getChildren().addAll(stat1, stat2, stat3);
+            applyThemeToEnseignantsStats();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void applyThemeToEnseignantsStats() {
+        String bgCard   = isDark ? "#1a1a2e" : "#ffffff";
+        String border   = isDark ? "#2d2d4e" : "#e2e8f0";
+        String textMain = isDark ? "#e2e8f0" : "#1e293b";
+        
+        for (javafx.scene.Node node : statsEnseignantsPanel.getChildren()) {
+            if (node instanceof VBox vbox) {
+                vbox.setStyle("-fx-background-color: " + bgCard + ";" +
+                        "-fx-background-radius: 12;" +
+                        "-fx-padding: 20;" +
+                        "-fx-border-color: " + border + ";" +
+                        "-fx-border-radius: 12;" +
+                        "-fx-border-width: 1;");
+            }
+        }
     }
 
     private void afficherCartes(List<User> users) {
@@ -1020,16 +1263,20 @@ public class DashboardController {
     //  Navigation
     @FXML private void handleMenuDashboard()   { afficherPage("dashboard"); }
     @FXML private void handleMenuUsers()       { afficherPage("users"); }
-    @FXML private void handleMenuEtudiants()   {
-        showInfo("Module Etudiants — bientôt disponible !"); }
-    @FXML private void handleMenuEnseignants() {
-        showInfo("Module Enseignants — bientôt disponible !"); }
+    @FXML private void handleMenuEtudiants()   { afficherPage("etudiants"); }
+    @FXML private void handleMenuEnseignants() { afficherPage("enseignants"); }
     @FXML private void handleMenuClasses()     {
         showInfo("Module Classes — bientôt disponible !"); }
+    @FXML private void handleMenuEvenement()   { afficherPage("evenement"); }
+    @FXML private void handleMenuForum()       { afficherPage("forum"); }
 
     private void afficherPage(String page) {
         pageDashboard.setVisible(false); pageDashboard.setManaged(false);
         pageUsers.setVisible(false);     pageUsers.setManaged(false);
+        pageEtudiants.setVisible(false); pageEtudiants.setManaged(false);
+        pageEnseignants.setVisible(false); pageEnseignants.setManaged(false);
+        pageEvenement.setVisible(false); pageEvenement.setManaged(false);
+        pageForum.setVisible(false); pageForum.setManaged(false);
 
         String textMenu  = isDark ? D_TEXT_MENU : L_TEXT_MENU;
         String styleNormal =
@@ -1046,7 +1293,7 @@ public class DashboardController {
 
         for (Button b : new Button[]{
                 btnMenuDashboard, btnMenuUsers, btnMenuEtudiants,
-                btnMenuEnseignants, btnMenuClasses}) {
+                btnMenuEnseignants, btnMenuClasses, btnMenuEvenement, btnMenuForum}) {
             b.setStyle(styleNormal);
         }
 
@@ -1064,6 +1311,32 @@ public class DashboardController {
                 lblPageTitre.setText("Utilisateurs");
                 btnMenuUsers.setStyle(styleActif);
                 chargerTousUsers();
+            }
+            case "etudiants" -> {
+                pageEtudiants.setVisible(true);
+                pageEtudiants.setManaged(true);
+                lblPageTitre.setText("Etudiants");
+                btnMenuEtudiants.setStyle(styleActif);
+                chargerTousEtudiants();
+            }
+            case "enseignants" -> {
+                pageEnseignants.setVisible(true);
+                pageEnseignants.setManaged(true);
+                lblPageTitre.setText("Enseignants");
+                btnMenuEnseignants.setStyle(styleActif);
+                chargerTousEnseignants();
+            }
+            case "evenement" -> {
+                pageEvenement.setVisible(true);
+                pageEvenement.setManaged(true);
+                lblPageTitre.setText("Evenements");
+                btnMenuEvenement.setStyle(styleActif);
+            }
+            case "forum" -> {
+                pageForum.setVisible(true);
+                pageForum.setManaged(true);
+                lblPageTitre.setText("Forum");
+                btnMenuForum.setStyle(styleActif);
             }
         }
     }

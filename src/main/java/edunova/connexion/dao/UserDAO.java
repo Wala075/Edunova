@@ -189,4 +189,228 @@ public class UserDAO {
         }
         return roles;
     }
+
+    // STUDENT STATISTICS
+    public int countStudents() {
+        String sql = "SELECT COUNT(*) as total FROM user WHERE role_id = (SELECT id_r FROM role WHERE nom_r = 'Etudiant')";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countActiveStudents() {
+        String sql = "SELECT COUNT(*) as total FROM user WHERE role_id = (SELECT id_r FROM role WHERE nom_r = 'Etudiant') AND actif_u = true";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countInactiveStudents() {
+        String sql = "SELECT COUNT(*) as total FROM user WHERE role_id = (SELECT id_r FROM role WHERE nom_r = 'Etudiant') AND actif_u = false";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<User> findStudents() {
+        List<User> list = new ArrayList<>();
+        String sql =
+                "SELECT u.id_u, u.email_u, u.nom_u, u.prenom_u, " +
+                        "       u.telephone_u, u.actif_u, u.role_id, r.nom_r " +
+                        "FROM user u " +
+                        "JOIN role r ON u.role_id = r.id_r " +
+                        "WHERE r.nom_r = 'Etudiant' " +
+                        "ORDER BY u.nom_u, u.prenom_u";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new User(
+                        rs.getInt("id_u"),
+                        rs.getString("email_u"),
+                        rs.getString("nom_u"),
+                        rs.getString("prenom_u"),
+                        rs.getString("telephone_u"),
+                        rs.getBoolean("actif_u"),
+                        rs.getInt("role_id"),
+                        rs.getString("nom_r")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<User> searchStudents(String keyword) {
+        List<User> list = new ArrayList<>();
+        String sql =
+                "SELECT u.id_u, u.email_u, u.nom_u, u.prenom_u, " +
+                        "       u.telephone_u, u.actif_u, u.role_id, r.nom_r " +
+                        "FROM user u " +
+                        "JOIN role r ON u.role_id = r.id_r " +
+                        "WHERE r.nom_r = 'Etudiant' AND (u.nom_u LIKE ? OR u.prenom_u LIKE ? OR u.email_u LIKE ?) " +
+                        "ORDER BY u.nom_u";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String kw = "%" + keyword + "%";
+            stmt.setString(1, kw);
+            stmt.setString(2, kw);
+            stmt.setString(3, kw);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                list.add(new User(
+                        rs.getInt("id_u"),
+                        rs.getString("email_u"),
+                        rs.getString("nom_u"),
+                        rs.getString("prenom_u"),
+                        rs.getString("telephone_u"),
+                        rs.getBoolean("actif_u"),
+                        rs.getInt("role_id"),
+                        rs.getString("nom_r")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // TEACHER STATISTICS
+    public int countTeachers() {
+        String sql = "SELECT COUNT(*) as total FROM user WHERE role_id = (SELECT id_r FROM role WHERE nom_r = 'Enseignant')";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countActiveTeachers() {
+        String sql = "SELECT COUNT(*) as total FROM user WHERE role_id = (SELECT id_r FROM role WHERE nom_r = 'Enseignant') AND actif_u = true";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countInactiveTeachers() {
+        String sql = "SELECT COUNT(*) as total FROM user WHERE role_id = (SELECT id_r FROM role WHERE nom_r = 'Enseignant') AND actif_u = false";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<User> findTeachers() {
+        List<User> list = new ArrayList<>();
+        String sql =
+                "SELECT u.id_u, u.email_u, u.nom_u, u.prenom_u, " +
+                        "       u.telephone_u, u.actif_u, u.role_id, r.nom_r " +
+                        "FROM user u " +
+                        "JOIN role r ON u.role_id = r.id_r " +
+                        "WHERE r.nom_r = 'Enseignant' " +
+                        "ORDER BY u.nom_u, u.prenom_u";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new User(
+                        rs.getInt("id_u"),
+                        rs.getString("email_u"),
+                        rs.getString("nom_u"),
+                        rs.getString("prenom_u"),
+                        rs.getString("telephone_u"),
+                        rs.getBoolean("actif_u"),
+                        rs.getInt("role_id"),
+                        rs.getString("nom_r")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<User> searchTeachers(String keyword) {
+        List<User> list = new ArrayList<>();
+        String sql =
+                "SELECT u.id_u, u.email_u, u.nom_u, u.prenom_u, " +
+                        "       u.telephone_u, u.actif_u, u.role_id, r.nom_r " +
+                        "FROM user u " +
+                        "JOIN role r ON u.role_id = r.id_r " +
+                        "WHERE r.nom_r = 'Enseignant' AND (u.nom_u LIKE ? OR u.prenom_u LIKE ? OR u.email_u LIKE ?) " +
+                        "ORDER BY u.nom_u";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String kw = "%" + keyword + "%";
+            stmt.setString(1, kw);
+            stmt.setString(2, kw);
+            stmt.setString(3, kw);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                list.add(new User(
+                        rs.getInt("id_u"),
+                        rs.getString("email_u"),
+                        rs.getString("nom_u"),
+                        rs.getString("prenom_u"),
+                        rs.getString("telephone_u"),
+                        rs.getBoolean("actif_u"),
+                        rs.getInt("role_id"),
+                        rs.getString("nom_r")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }
