@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="edu.edunova.controllers.EmploisEnseignants"
+            fitToWidth="true" hbarPolicy="NEVER"
+            stylesheets="@dashboard.css" styleClass="center-scroll">
+
+    <VBox spacing="20" styleClass="app-root">
+        <padding><Insets bottom="28" left="28" right="28" top="28"/></padding>
+
+        <!-- ── En-tête ─────────────────────────────────────────────── -->
+        <HBox alignment="CENTER_LEFT" spacing="14">
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label styleClass="page-icon-badge" text="👨‍🏫"/>
+                    <Label styleClass="app-title" text="Emplois Enseignants"/>
+                </HBox>
+                <Label styleClass="app-subtitle"
+                       text="Grille calendrier générée automatiquement à partir des séances"/>
+            </VBox>
+        </HBox>
+
+        <!-- ── Analyse IA ──────────────────────────────────────────── -->
+        <VBox spacing="8" styleClass="form-panel">
+            <Label styleClass="panel-section-title" text="✦  Analyse intelligente"/>
+            <VBox fx:id="insightsBox" spacing="6">
+                <padding><Insets top="4"/></padding>
+            </VBox>
+        </VBox>
+
+        <!-- ── Sélection enseignant + navigation semaine ───────────── -->
+        <VBox spacing="10" styleClass="form-panel">
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label styleClass="panel-section-title" text="Enseignant"/>
+                <ComboBox fx:id="filtreTeacherCombo" prefHeight="40" HBox.hgrow="ALWAYS"
+                          maxWidth="1.7976931348623157E308" styleClass="combo-pill"
+                          promptText="— Sélectionner un enseignant —"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Button text="◀  Précédente" onAction="#semainePrecedente" prefHeight="34" styleClass="btn-ghost"/>
+                <Button text="Aujourd'hui"   onAction="#semaineActuelle"   prefHeight="34" styleClass="btn-secondary"/>
+                <Button text="Suivante  ▶"  onAction="#semaineSuivante"   prefHeight="34" styleClass="btn-ghost"/>
+            </HBox>
+        </VBox>
+
+        <!-- ── Grille emploi du temps ──────────────────────────────── -->
+        <VBox spacing="0" styleClass="timetable-wrapper" VBox.vgrow="ALWAYS">
+            <ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED"
+                        styleClass="center-scroll" VBox.vgrow="ALWAYS">
+                <GridPane fx:id="timetableGrid" hgap="0" vgap="0" styleClass="tt-printed-grid">
+                    <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                </GridPane>
+            </ScrollPane>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

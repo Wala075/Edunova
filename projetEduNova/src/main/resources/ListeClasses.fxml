@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="edu.edunova.controllers.ListeClasses"
+            fitToWidth="true" hbarPolicy="NEVER"
+            stylesheets="@dashboard.css" styleClass="center-scroll">
+
+    <VBox spacing="22" styleClass="app-root">
+        <padding><Insets bottom="28" left="28" right="28" top="28"/></padding>
+
+        <!-- En-tête -->
+        <HBox alignment="CENTER_LEFT" spacing="14">
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label styleClass="page-icon-badge" text="📋"/>
+                    <Label styleClass="app-title" text="Liste des Classes"/>
+                </HBox>
+                <Label styleClass="app-subtitle" text="Vue lecture seule — toutes les classes enregistrées"/>
+            </VBox>
+            <Label fx:id="resultatLabel" styleClass="section-head-sub" text=""/>
+        </HBox>
+
+        <!-- Barre de recherche -->
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="search-bar-box">
+            <Label styleClass="search-icon-label" text="🔍"/>
+            <TextField fx:id="searchField" prefHeight="40" HBox.hgrow="ALWAYS"
+                       promptText="Rechercher par nom, niveau..." styleClass="input-pill"/>
+        </HBox>
+
+        <!-- Table -->
+        <VBox spacing="0" styleClass="table-container" VBox.vgrow="ALWAYS">
+            <TableView fx:id="classesTable" prefHeight="520" styleClass="app-table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colNom"      prefWidth="260" text="Nom de la classe" sortable="true"/>
+                    <TableColumn fx:id="colNiveau"   prefWidth="200" text="Niveau"           sortable="true"/>
+                    <TableColumn fx:id="colCapacite" prefWidth="200" text="Capacité"         sortable="true"/>
+                    <TableColumn fx:id="colStatut"   prefWidth="200" text="Statut"           sortable="true"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

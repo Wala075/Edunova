@@ -1,0 +1,13 @@
+target/
+.idea/
+*.iml
+*.iws
+*.ipr
+.mvn/
+
+# Fichiers sensibles - ne jamais committer
+.env
+src/main/resources/email.properties
+
+# Fichiers temporaires IntelliJ
+*.new

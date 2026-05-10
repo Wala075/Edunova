@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:id="rootPane"
+      fx:controller="edu.edunova.controllers.MainController"
+      prefHeight="780.0" prefWidth="1300.0" spacing="0.0"
+      stylesheets="@dashboard.css" styleClass="root-pane">
+
+    <!-- ═══════════════════════════════════════════
+         SIDEBAR
+         ═══════════════════════════════════════════ -->
+    <VBox prefWidth="265" styleClass="left-sidebar">
+
+        <!-- Logo -->
+        <VBox alignment="CENTER" styleClass="sidebar-logo-box">
+            <Label styleClass="logo-icon" text="✦"/>
+            <Label styleClass="logo-text" text="EduNova"/>
+            <Label styleClass="logo-sub" text="Gestion scolaire intelligente"/>
+        </VBox>
+
+        <Region styleClass="sidebar-sep"/>
+
+        <!-- Profil utilisateur -->
+        <VBox alignment="CENTER" styleClass="sidebar-profile-box">
+            <StackPane alignment="CENTER" styleClass="user-avatar">
+                <Label styleClass="user-avatar-text" text="H"/>
+            </StackPane>
+            <Label styleClass="user-name" text="Hamza Mraihi"/>
+            <HBox alignment="CENTER" spacing="6">
+                <Region styleClass="user-status-dot"/>
+                <Label styleClass="user-role" text="Administrateur"/>
+            </HBox>
+        </VBox>
+
+        <Region styleClass="sidebar-sep"/>
+
+        <!-- Navigation label -->
+        <Label styleClass="nav-section-label" text="NAVIGATION">
+            <VBox.margin><Insets top="16" left="20" bottom="6"/></VBox.margin>
+        </Label>
+
+        <!-- Menu navigation -->
+        <VBox spacing="3" style="-fx-padding: 0 12 0 12;">
+            <Button fx:id="btnClasses" maxWidth="Infinity" onAction="#chargerClasses"
+                    styleClass="menu-btn" text="🏫   Classes"/>
+            <Button fx:id="btnSeances" maxWidth="Infinity" onAction="#chargerSeances"
+                    styleClass="menu-btn" text="📅   Emploi du temps"/>
+            <Button fx:id="btnEnvoiEmail" maxWidth="Infinity" onAction="#chargerEnvoiEmail"
+                    styleClass="menu-btn" text="✉   Envoi Email"/>
+            <Button fx:id="btnEnseignants" maxWidth="Infinity" onAction="#chargerEmploisEnseignants"
+                    styleClass="menu-btn" text="👨‍🏫   Emplois Enseignants"/>
+            <Button fx:id="btnListeClasses" maxWidth="Infinity" onAction="#chargerListeClasses"
+                    styleClass="menu-btn" text="📋   Liste des classes"/>
+        </VBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <Region styleClass="sidebar-sep"/>
+
+        <!-- Footer sidebar -->
+        <VBox spacing="6" styleClass="sidebar-footer">
+            <Button fx:id="themeToggleBtn" maxWidth="Infinity" onAction="#toggleTheme"
+                    styleClass="theme-toggle-btn" text="☀   Mode clair"/>
+            <Button maxWidth="Infinity" styleClass="deconnexion-btn" text="⏻   Déconnexion"/>
+        </VBox>
+    </VBox>
+
+    <!-- ═══════════════════════════════════════════
+         CONTENT AREA
+         ═══════════════════════════════════════════ -->
+    <StackPane fx:id="contentArea" HBox.hgrow="ALWAYS" styleClass="content-area"/>
+
+</HBox>

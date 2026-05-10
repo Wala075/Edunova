@@ -1,0 +1,21 @@
+# =====================================================================
+# Configuration SMTP Gmail - FICHIER EXEMPLE
+# =====================================================================
+# Copier ce fichier en "email.properties" et remplir vos valeurs.
+# NE PAS committer email.properties (il est dans .gitignore)
+#
+# Comment obtenir un mot de passe d'application Gmail :
+# 1. Va sur https://myaccount.google.com/security
+# 2. Active la verification en 2 etapes si ce n'est pas fait
+# 3. Va sur https://myaccount.google.com/apppasswords
+# 4. Selectionne "Autre (nom personnalise)" -> tape "EduNova" -> Generer
+# 5. Copie le mot de passe de 16 caracteres genere
+# =====================================================================
+
+smtp.host=smtp.gmail.com
+smtp.port=587
+smtp.username=VOTRE_EMAIL@gmail.com
+smtp.password=VOTRE_MOT_DE_PASSE_APPLICATION
+
+smtp.from.name=EduNova
+smtp.from.email=VOTRE_EMAIL@gmail.com
