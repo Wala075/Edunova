@@ -1,0 +1,31 @@
+# Normalize line endings for all text files
+* text=auto
+
+# Java source files - LF
+*.java text eol=lf
+
+# XML/FXML files - LF
+*.xml text eol=lf
+*.fxml text eol=lf
+
+# SQL files - LF
+*.sql text eol=lf
+
+# Markdown
+*.md text eol=lf
+
+# Properties files
+*.properties text eol=lf
+
+# CSS
+*.css text eol=lf
+
+# Keep binary files as-is
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.jar binary
+*.class binary
