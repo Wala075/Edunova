@@ -54,6 +54,13 @@ public class UserFormController {
         roles = dao.findAllRoles();
         for (String[] role : roles)
             cbRole.getItems().add(role[1]);
+        
+        // Ajouter le rôle Parent s'il n'existe pas déjà
+        boolean parentExists = roles.stream()
+                .anyMatch(role -> "Parent".equals(role[1]));
+        if (!parentExists) {
+            cbRole.getItems().add("Parent");
+        }
 
         // Validations temps réel
         txtNom.textProperty().addListener(
@@ -371,10 +378,16 @@ public class UserFormController {
     }
 
     private int getRoleId(String roleNom) {
+        // Chercher dans les rôles de la base de données
         for (String[] role : roles)
             if (role[1].equals(roleNom))
                 return Integer.parseInt(role[0]);
-        return 1;
+        
+        // Si c'est le rôle Parent, retourner un ID spécifique
+        if ("Parent".equals(roleNom))
+            return 4; // ID pour Parent (à adapter selon votre BD)
+        
+        return 1; // ID par défaut
     }
 
     private void showAlert(Alert.AlertType type,
