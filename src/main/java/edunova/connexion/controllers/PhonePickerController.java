@@ -102,7 +102,15 @@ public class PhonePickerController {
 
     // ── Extraire emoji, nom, code depuis une entrée ───────────────
     public static String getEmoji(String paysNom) {
-        return paysNom.split(" ")[0];
+        // Extraire le drapeau du début de la chaîne
+        if (paysNom.length() >= 2) {
+            String emoji = paysNom.substring(0, 2);
+            // Vérifier si c'est un emoji de drapeau (caractères spéciaux)
+            if (emoji.codePointCount(0, emoji.length()) == 1) {
+                return emoji;
+            }
+        }
+        return "🌍"; // Drapeau par défaut
     }
 
     public static String getNomSansEmoji(String paysNom) {
@@ -132,8 +140,12 @@ public class PhonePickerController {
 
         // ── Drapeau ───────────────────────────────────────────────
         Label lblEmoji = new Label(getEmoji(pays));
-        lblEmoji.setStyle("-fx-font-size: 20;");
-        lblEmoji.setMinWidth(30);
+        lblEmoji.setStyle(
+                "-fx-font-size: 24;" +
+                "-fx-text-alignment: center;" +
+                "-fx-padding: 0 5;");
+        lblEmoji.setMinWidth(40);
+        lblEmoji.setAlignment(Pos.CENTER);
 
         // ── Nom du pays ───────────────────────────────────────────
         Label lblNom = new Label(getNomSansEmoji(pays));
