@@ -98,8 +98,19 @@ public class DashboardController {
     @FXML private VBox     cardDerniers;
     @FXML private VBox     cardActifs;
     @FXML private VBox     cardActions;
+    @FXML private VBox     cardAIStats;
     @FXML private Button   btnGererUsers;
     @FXML private FlowPane flowDerniers;
+
+    // AI STATISTICS LABELS
+    @FXML private Label    lblAIStatsTitle;
+    @FXML private Label    lblAIStatsSub;
+    @FXML private Label    lblAIStat1Title;
+    @FXML private Label    lblAIStat1Content;
+    @FXML private Label    lblAIStat2Title;
+    @FXML private Label    lblAIStat2Content;
+    @FXML private Label    lblAIStat3Title;
+    @FXML private Label    lblAIStat3Content;
 
     // PAGE USERS
     @FXML private FlowPane  flowCartes;
@@ -382,6 +393,7 @@ public class DashboardController {
         cardDerniers.setStyle(styleCard);
         cardActifs.setStyle(styleCard);
         cardActions.setStyle(styleCard);
+        cardAIStats.setStyle(styleCard);
 
         lblDerniersTitle.setStyle(
                 "-fx-font-size: 16; -fx-font-weight: bold;" +
@@ -398,6 +410,28 @@ public class DashboardController {
         lblActionsTitle.setStyle(
                 "-fx-font-size: 14; -fx-font-weight: bold;" +
                         "-fx-text-fill: " + textMain + "; -fx-padding: 0 0 15 0;");
+
+        // AI Statistics Labels
+        lblAIStatsTitle.setStyle(
+                "-fx-font-size: 16; -fx-font-weight: bold;" +
+                        "-fx-text-fill: " + textMain + ";");
+        lblAIStatsSub.setStyle(
+                "-fx-font-size: 11; -fx-text-fill: " + textSub + ";");
+        lblAIStat1Title.setStyle(
+                "-fx-font-size: 13; -fx-font-weight: bold;" +
+                        "-fx-text-fill: " + textMain + ";");
+        lblAIStat1Content.setStyle(
+                "-fx-font-size: 12; -fx-text-fill: " + textSub + "; -fx-wrap-text: true;");
+        lblAIStat2Title.setStyle(
+                "-fx-font-size: 13; -fx-font-weight: bold;" +
+                        "-fx-text-fill: " + textMain + ";");
+        lblAIStat2Content.setStyle(
+                "-fx-font-size: 12; -fx-text-fill: " + textSub + "; -fx-wrap-text: true;");
+        lblAIStat3Title.setStyle(
+                "-fx-font-size: 13; -fx-font-weight: bold;" +
+                        "-fx-text-fill: " + textMain + ";");
+        lblAIStat3Content.setStyle(
+                "-fx-font-size: 12; -fx-text-fill: " + textSub + "; -fx-wrap-text: true;");
 
         btnGererUsers.setStyle(
                 "-fx-background-color: " + bgMain + ";" +
@@ -537,6 +571,7 @@ public class DashboardController {
         lblInactifs.setText(String.valueOf(inactifs));
 
         afficherCartesDerniers(tous.stream().limit(5).toList());
+        genererStatistiquesAI(total, admins, enseignants, etudiants, actifs, inactifs);
     }
 
     //  Cartes mini dashboard
@@ -636,6 +671,73 @@ public class DashboardController {
                 "-fx-border-radius: 10; -fx-border-width: 2;" +
                 "-fx-effect: dropshadow(gaussian," + c + "66,12,0,0,0);" +
                 "-fx-cursor: hand;";
+    }
+
+    //  Génération des statistiques IA
+    private void genererStatistiquesAI(long total, long admins, long enseignants, long etudiants, long actifs, long inactifs) {
+        try {
+            // Calcul des pourcentages
+            double tauxActivite = total > 0 ? (actifs * 100.0 / total) : 0;
+            double tauxEtudiants = total > 0 ? (etudiants * 100.0 / total) : 0;
+            double tauxEnseignants = total > 0 ? (enseignants * 100.0 / total) : 0;
+
+            // Statistique 1: Performance des Classes
+            String stat1 = genererStat1(etudiants, enseignants, tauxEtudiants);
+            lblAIStat1Content.setText(stat1);
+
+            // Statistique 2: Taux d'Assiduité
+            String stat2 = genererStat2(actifs, inactifs, tauxActivite);
+            lblAIStat2Content.setText(stat2);
+
+            // Statistique 3: Analyse des Notes
+            String stat3 = genererStat3(etudiants, enseignants, tauxEtudiants);
+            lblAIStat3Content.setText(stat3);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String genererStat1(long etudiants, long enseignants, double tauxEtudiants) {
+        if (enseignants == 0) {
+            return "Aucun enseignant enregistré. Commencez par ajouter des enseignants pour optimiser la gestion des classes.";
+        }
+        
+        double ratioEtudiantsParEnseignant = etudiants / (double) enseignants;
+        
+        if (ratioEtudiantsParEnseignant > 30) {
+            return String.format("Ratio élevé: %.1f étudiants par enseignant. Considérez l'ajout d'enseignants supplémentaires pour améliorer la qualité pédagogique et réduire la charge de travail.", ratioEtudiantsParEnseignant);
+        } else if (ratioEtudiantsParEnseignant > 20) {
+            return String.format("Ratio modéré: %.1f étudiants par enseignant. La distribution est acceptable mais pourrait être optimisée pour une meilleure prise en charge individualisée.", ratioEtudiantsParEnseignant);
+        } else {
+            return String.format("Ratio optimal: %.1f étudiants par enseignant. Excellente configuration pour un suivi pédagogique de qualité et une attention personnalisée aux étudiants.", ratioEtudiantsParEnseignant);
+        }
+    }
+
+    private String genererStat2(long actifs, long inactifs, double tauxActivite) {
+        if (tauxActivite >= 90) {
+            return String.format("Taux d'assiduité excellent: %.1f%% (%d actifs). L'engagement des utilisateurs est très élevé, reflétant une bonne utilisation de la plateforme.", tauxActivite, actifs);
+        } else if (tauxActivite >= 75) {
+            return String.format("Taux d'assiduité bon: %.1f%% (%d actifs). La majorité des utilisateurs sont engagés. Quelques efforts pourraient améliorer la participation des %d comptes inactifs.", tauxActivite, actifs, inactifs);
+        } else if (tauxActivite >= 50) {
+            return String.format("Taux d'assiduité modéré: %.1f%% (%d actifs). Il y a %d comptes inactifs. Envisagez des actions pour réengager les utilisateurs et améliorer la participation.", tauxActivite, actifs, inactifs);
+        } else {
+            return String.format("Taux d'assiduité faible: %.1f%% (%d actifs). %d comptes sont inactifs. Une intervention est recommandée pour relancer l'engagement et la participation.", tauxActivite, actifs, inactifs);
+        }
+    }
+
+    private String genererStat3(long etudiants, long enseignants, double tauxEtudiants) {
+        if (etudiants == 0) {
+            return "Aucun étudiant enregistré. Commencez par inscrire des étudiants pour démarrer le suivi académique et l'évaluation des performances.";
+        }
+        
+        if (tauxEtudiants > 70) {
+            return String.format("Composition: %.1f%% d'étudiants. La plateforme est principalement utilisée par les étudiants. Assurez-vous que les enseignants ont accès aux outils de suivi et d'évaluation nécessaires.", tauxEtudiants);
+        } else if (tauxEtudiants > 40) {
+            return String.format("Composition équilibrée: %.1f%% d'étudiants. La distribution entre étudiants et personnel est bien proportionnée pour une gestion académique efficace.", tauxEtudiants);
+        } else {
+            return String.format("Composition: %.1f%% d'étudiants. La proportion d'étudiants est faible. Augmentez les inscriptions pour une meilleure utilisation de la plateforme académique.", tauxEtudiants);
+        }
     }
 
     //  Cartes utilisateurs
