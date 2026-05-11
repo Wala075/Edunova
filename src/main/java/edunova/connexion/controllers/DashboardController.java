@@ -47,7 +47,6 @@ public class DashboardController {
     @FXML private Button btnMenuUsers;
     @FXML private Button btnMenuEtudiants;
     @FXML private Button btnMenuEnseignants;
-    @FXML private Button btnMenuParent;
     @FXML private Button btnMenuClasses;
     @FXML private Button btnMenuEvenement;
     @FXML private Button btnMenuForum;
@@ -66,7 +65,6 @@ public class DashboardController {
     @FXML private VBox       pageUsers;
     @FXML private VBox       pageEtudiants;
     @FXML private VBox       pageEnseignants;
-    @FXML private VBox       pageParent;
     @FXML private VBox       pageEvenement;
     @FXML private VBox       pageForum;
     @FXML private VBox       dashContent;
@@ -137,14 +135,6 @@ public class DashboardController {
     // PAGE EVENEMENT
     @FXML private Label     lblEvenementGrand;
     @FXML private Label     lblEvenementSous;
-
-    // PAGE PARENT
-    @FXML private Label     lblParentGrand;
-    @FXML private Label     lblParentSous;
-    @FXML private FlowPane  flowParent;
-    @FXML private Label     lblCompteurParent;
-    @FXML private TextField txtRechercheParent;
-    @FXML private HBox      statsParentPanel;
 
     // PAGE FORUM
     @FXML private Label     lblForumGrand;
@@ -289,7 +279,7 @@ public class DashboardController {
 
         for (Button b : new Button[]{
                 btnMenuUsers, btnMenuEtudiants,
-                btnMenuEnseignants, btnMenuClasses}) {
+                btnMenuEnseignants, btnMenuClasses, btnMenuEvenement, btnMenuForum}) {
             b.setStyle(styleNormal);
         }
         btnMenuDashboard.setStyle(
@@ -490,26 +480,6 @@ public class DashboardController {
         flowEnseignants.setStyle(
                 "-fx-background-color: " + bgMain + "; -fx-padding: 5;");
         applyThemeToEnseignantsStats();
-
-        // PAGE PARENT
-        pageParent.setStyle(
-                "-fx-background-color: " + bgMain + "; -fx-padding: 25;");
-        lblParentGrand.setStyle(
-                "-fx-font-size: 22; -fx-font-weight: bold;" +
-                        "-fx-text-fill: " + textMain + ";");
-        lblParentSous.setStyle(
-                "-fx-font-size: 12; -fx-text-fill: " + textSub + ";");
-        lblCompteurParent.setStyle(
-                "-fx-text-fill: " + textSub + "; -fx-font-size: 12;");
-        txtRechercheParent.setStyle(
-                "-fx-background-color: " + bgCard + ";" +
-                        "-fx-text-fill: " + textMain + ";" +
-                        "-fx-prompt-text-fill: " + textSub + ";" +
-                        "-fx-background-radius: 8; -fx-padding: 9 15;" +
-                        "-fx-border-color: " + border + "; -fx-border-radius: 8;");
-        flowParent.setStyle(
-                "-fx-background-color: " + bgMain + "; -fx-padding: 5;");
-        applyThemeToParentStats();
 
         // PAGE EVENEMENT
         pageEvenement.setStyle(
@@ -817,83 +787,6 @@ public class DashboardController {
         String textMain = isDark ? "#e2e8f0" : "#1e293b";
         
         for (javafx.scene.Node node : statsEnseignantsPanel.getChildren()) {
-            if (node instanceof VBox vbox) {
-                vbox.setStyle("-fx-background-color: " + bgCard + ";" +
-                        "-fx-background-radius: 12;" +
-                        "-fx-padding: 20;" +
-                        "-fx-border-color: " + border + ";" +
-                        "-fx-border-radius: 12;" +
-                        "-fx-border-width: 1;");
-            }
-        }
-    }
-
-    //  Cartes parents
-    private void chargerTousParents() {
-        afficherCartesParent(dao.findParents());
-        afficherStatistiquesParent();
-    }
-
-    private void afficherCartesParent(List<User> parents) {
-        flowParent.getChildren().clear();
-        if (lblCompteurParent != null)
-            lblCompteurParent.setText(parents.size() + " parent(s)");
-        for (User p : parents)
-            flowParent.getChildren().add(creerCarte(p));
-    }
-
-    private void afficherStatistiquesParent() {
-        try {
-            int totalParents = dao.countParents();
-            int actifs = dao.countActiveParents();
-            int inactifs = dao.countInactiveParents();
-            
-            statsParentPanel.getChildren().clear();
-            
-            String bgCard   = isDark ? "#1a1a2e" : "#ffffff";
-            String textMain = isDark ? "#e2e8f0" : "#1e293b";
-            String textSub  = isDark ? "#64748b"  : "#94a3b8";
-            
-            // Stat 1: Total Parents
-            VBox stat1 = creerStatCard(
-                "👨‍👩‍👧",
-                "Total Parents",
-                String.valueOf(totalParents),
-                "#f59e0b",
-                bgCard, textMain, textSub
-            );
-            
-            // Stat 2: Actifs
-            VBox stat2 = creerStatCard(
-                "✅",
-                "Parents Actifs",
-                String.valueOf(actifs),
-                "#22c55e",
-                bgCard, textMain, textSub
-            );
-            
-            // Stat 3: Inactifs
-            VBox stat3 = creerStatCard(
-                "❌",
-                "Parents Inactifs",
-                String.valueOf(inactifs),
-                "#f87171",
-                bgCard, textMain, textSub
-            );
-            
-            statsParentPanel.getChildren().addAll(stat1, stat2, stat3);
-            applyThemeToParentStats();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void applyThemeToParentStats() {
-        String bgCard   = isDark ? "#1a1a2e" : "#ffffff";
-        String border   = isDark ? "#2d2d4e" : "#e2e8f0";
-        String textMain = isDark ? "#e2e8f0" : "#1e293b";
-        
-        for (javafx.scene.Node node : statsParentPanel.getChildren()) {
             if (node instanceof VBox vbox) {
                 vbox.setStyle("-fx-background-color: " + bgCard + ";" +
                         "-fx-background-radius: 12;" +
@@ -1372,7 +1265,6 @@ public class DashboardController {
     @FXML private void handleMenuUsers()       { afficherPage("users"); }
     @FXML private void handleMenuEtudiants()   { afficherPage("etudiants"); }
     @FXML private void handleMenuEnseignants() { afficherPage("enseignants"); }
-    @FXML private void handleMenuParent()      { afficherPage("parent"); }
     @FXML private void handleMenuClasses()     {
         showInfo("Module Classes — bientôt disponible !"); }
     @FXML private void handleMenuEvenement()   { afficherPage("evenement"); }
@@ -1383,7 +1275,6 @@ public class DashboardController {
         pageUsers.setVisible(false);     pageUsers.setManaged(false);
         pageEtudiants.setVisible(false); pageEtudiants.setManaged(false);
         pageEnseignants.setVisible(false); pageEnseignants.setManaged(false);
-        pageParent.setVisible(false); pageParent.setManaged(false);
         pageEvenement.setVisible(false); pageEvenement.setManaged(false);
         pageForum.setVisible(false); pageForum.setManaged(false);
 
@@ -1402,7 +1293,7 @@ public class DashboardController {
 
         for (Button b : new Button[]{
                 btnMenuDashboard, btnMenuUsers, btnMenuEtudiants,
-                btnMenuEnseignants, btnMenuParent, btnMenuClasses, btnMenuEvenement, btnMenuForum}) {
+                btnMenuEnseignants, btnMenuClasses, btnMenuEvenement, btnMenuForum}) {
             b.setStyle(styleNormal);
         }
 
@@ -1434,13 +1325,6 @@ public class DashboardController {
                 lblPageTitre.setText("Enseignants");
                 btnMenuEnseignants.setStyle(styleActif);
                 chargerTousEnseignants();
-            }
-            case "parent" -> {
-                pageParent.setVisible(true);
-                pageParent.setManaged(true);
-                lblPageTitre.setText("Parents");
-                btnMenuParent.setStyle(styleActif);
-                chargerTousParents();
             }
             case "evenement" -> {
                 pageEvenement.setVisible(true);
