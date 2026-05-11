@@ -209,19 +209,6 @@
                                 </HBox>
                             </VBox>
 
-                            <VBox fx:id="cardActions" style="-fx-background-radius: 12;                                          -fx-padding: 20;                                          -fx-border-radius: 12;                                          -fx-border-width: 1;" HBox.hgrow="ALWAYS">
-                                <Label fx:id="lblActionsTitle" style="-fx-font-size: 14;                                               -fx-font-weight: bold;                                               -fx-padding: 0 0 15 0;" text="Actions rapides" />
-                                <VBox spacing="10">
-                                    <Button maxWidth="Infinity" onAction="#handleAjouterUser" style="-fx-background-color: #7c3aed;                                                    -fx-text-fill: white;                                                    -fx-background-radius: 8;                                                    -fx-padding: 10;                                                    -fx-font-size: 13;                                                    -fx-cursor: hand;" text="  + Ajouter un utilisateur">
-                              <font>
-                                 <Font size="14.0" />
-                              </font></Button>
-                                    <Button fx:id="btnGererUsers" maxWidth="Infinity" onAction="#handleMenuUsers" style="-fx-background-radius: 8;                                                    -fx-padding: 10;                                                    -fx-font-size: 13;                                                    -fx-cursor: hand;" text="  Gérer les utilisateurs">
-                              <font>
-                                 <Font size="14.0" />
-                              </font></Button>
-                                </VBox>
-                            </VBox>
                         </HBox>
                     </VBox>
                 </ScrollPane>
