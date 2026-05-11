@@ -84,7 +84,6 @@ public class DashboardController {
     @FXML private Label lblActifsTitle;
     @FXML private Label lblActifsLbl;
     @FXML private Label lblInactifsLbl;
-    @FXML private Label lblActionsTitle;
     @FXML private Label lblStatUsers;
     @FXML private Label lblStatAdmins;
     @FXML private Label lblStatEnseignants;
@@ -97,9 +96,7 @@ public class DashboardController {
     @FXML private VBox     cardEtudiants;
     @FXML private VBox     cardDerniers;
     @FXML private VBox     cardActifs;
-    @FXML private VBox     cardActions;
     @FXML private VBox     cardAIStats;
-    @FXML private Button   btnGererUsers;
     @FXML private FlowPane flowDerniers;
 
     // AI STATISTICS LABELS
@@ -392,7 +389,6 @@ public class DashboardController {
                         "-fx-border-radius: 12; -fx-border-width: 1;");
         cardDerniers.setStyle(styleCard);
         cardActifs.setStyle(styleCard);
-        cardActions.setStyle(styleCard);
         cardAIStats.setStyle(styleCard);
 
         lblDerniersTitle.setStyle(
@@ -407,9 +403,6 @@ public class DashboardController {
                 "-fx-text-fill: " + textSub + ";");
         lblInactifsLbl.setStyle(
                 "-fx-text-fill: " + textSub + ";");
-        lblActionsTitle.setStyle(
-                "-fx-font-size: 14; -fx-font-weight: bold;" +
-                        "-fx-text-fill: " + textMain + "; -fx-padding: 0 0 15 0;");
 
         // AI Statistics Labels
         lblAIStatsTitle.setStyle(
@@ -432,13 +425,6 @@ public class DashboardController {
                         "-fx-text-fill: " + textMain + ";");
         lblAIStat3Content.setStyle(
                 "-fx-font-size: 12; -fx-text-fill: " + textSub + "; -fx-wrap-text: true;");
-
-        btnGererUsers.setStyle(
-                "-fx-background-color: " + bgMain + ";" +
-                        "-fx-text-fill: " + textMenu + ";" +
-                        "-fx-background-radius: 8; -fx-padding: 10;" +
-                        "-fx-font-size: 13; -fx-border-color: " + border + ";" +
-                        "-fx-border-radius: 8; -fx-cursor: hand;");
 
         //  Page users
         pageUsers.setStyle(
