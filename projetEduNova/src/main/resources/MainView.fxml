@@ -69,8 +69,12 @@
 
         <!-- Footer sidebar -->
         <VBox spacing="6" styleClass="sidebar-footer">
-            <Button fx:id="themeToggleBtn" maxWidth="Infinity" onAction="#toggleTheme"
-                    styleClass="theme-toggle-btn" text="☀   Mode clair"/>
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="theme-toggle-row">
+                <Label fx:id="lblThemeLabel" styleClass="theme-label" text="🌙  Mode sombre"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="themeToggleBtn" onAction="#toggleTheme"
+                        styleClass="theme-pill-btn" text="★  Light"/>
+            </HBox>
             <Button maxWidth="Infinity" styleClass="deconnexion-btn" text="⏻   Déconnexion"/>
         </VBox>
     </VBox>

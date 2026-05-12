@@ -86,6 +86,31 @@
     -fx-font-size: 13px;
 }
 .sidebar-footer { -fx-padding: 12px; }
+
+/* Ligne thème : label + pill */
+.theme-toggle-row {
+    -fx-background-color: #1e1e3a;
+    -fx-background-radius: 10px;
+    -fx-padding: 8 12 8 14;
+}
+.theme-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94a3b8;
+    -fx-font-weight: 500;
+}
+.theme-pill-btn {
+    -fx-background-color: #7c3aed;
+    -fx-text-fill: white;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-padding: 5 14 5 14;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.theme-pill-btn:hover { -fx-background-color: #6d28d9; }
+
+/* Ancien sélecteur conservé pour compatibilité */
 .theme-toggle-btn {
     -fx-background-color: #7c3aed;
     -fx-text-fill: white;
@@ -470,6 +495,29 @@
     -fx-cursor: hand; -fx-font-size: 12px; -fx-font-weight: bold;
 }
 .root-pane.light .theme-toggle-btn:hover { -fx-background-color: #6d28d9; }
+
+/* Ligne thème mode clair */
+.root-pane.light .theme-toggle-row {
+    -fx-background-color: #f3e8ff;
+    -fx-background-radius: 10px;
+    -fx-padding: 8 12 8 14;
+}
+.root-pane.light .theme-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #475569;
+    -fx-font-weight: 500;
+}
+.root-pane.light .theme-pill-btn {
+    -fx-background-color: #0f1419;
+    -fx-text-fill: white;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-padding: 5 14 5 14;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.root-pane.light .theme-pill-btn:hover { -fx-background-color: #1f2937; }
 .root-pane.light .deconnexion-btn {
     -fx-background-color: #fef2f2; -fx-text-fill: #dc2626;
     -fx-font-size: 13px; -fx-font-weight: bold;

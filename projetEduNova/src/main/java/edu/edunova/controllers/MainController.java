@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
@@ -18,6 +19,7 @@ public class MainController {
     @FXML private HBox rootPane;
     @FXML private StackPane contentArea;
     @FXML private Button themeToggleBtn;
+    @FXML private Label lblThemeLabel;
 
     @FXML private Button btnClasses;
     @FXML private Button btnSeances;
@@ -61,10 +63,6 @@ public class MainController {
         chargerVue("/ListeClasses.fxml");
     }
 
-    /**
-     * Move the active style to the supplied button. Every other menu button is
-     * reset to its default style so only one is highlighted at a time.
-     */
     private void setActive(Button current) {
         Button[] all = {btnClasses, btnSeances, btnEnvoiEmail, btnEnseignants, btnListeClasses};
         for (Button b : all) {
@@ -90,10 +88,14 @@ public class MainController {
             if (!rootPane.getStyleClass().contains(LIGHT_CLASS)) {
                 rootPane.getStyleClass().add(LIGHT_CLASS);
             }
-            if (themeToggleBtn != null) themeToggleBtn.setText("🌙   Mode sombre");
+            // Mode clair actif : label "☀ Mode clair", pill "🌙 Dark"
+            if (lblThemeLabel != null) lblThemeLabel.setText("☀  Mode clair");
+            if (themeToggleBtn != null) themeToggleBtn.setText("🌙  Dark");
         } else {
             rootPane.getStyleClass().remove(LIGHT_CLASS);
-            if (themeToggleBtn != null) themeToggleBtn.setText("☀   Mode clair");
+            // Mode sombre actif : label "🌙 Mode sombre", pill "★ Light"
+            if (lblThemeLabel != null) lblThemeLabel.setText("🌙  Mode sombre");
+            if (themeToggleBtn != null) themeToggleBtn.setText("★  Light");
         }
     }
 
