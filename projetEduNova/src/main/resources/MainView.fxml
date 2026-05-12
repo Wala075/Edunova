@@ -53,14 +53,14 @@
         <VBox spacing="3" style="-fx-padding: 0 12 0 12;">
             <Button fx:id="btnClasses" maxWidth="Infinity" onAction="#chargerClasses"
                     styleClass="menu-btn" text="🏫   Classes"/>
+            <Button fx:id="btnListeClasses" maxWidth="Infinity" onAction="#chargerListeClasses"
+                    styleClass="menu-btn" text="📋   Liste des classes"/>
             <Button fx:id="btnSeances" maxWidth="Infinity" onAction="#chargerSeances"
                     styleClass="menu-btn" text="📅   Emploi du temps"/>
             <Button fx:id="btnEnvoiEmail" maxWidth="Infinity" onAction="#chargerEnvoiEmail"
                     styleClass="menu-btn" text="✉   Envoi Email"/>
             <Button fx:id="btnEnseignants" maxWidth="Infinity" onAction="#chargerEmploisEnseignants"
                     styleClass="menu-btn" text="👨‍🏫   Emplois Enseignants"/>
-            <Button fx:id="btnListeClasses" maxWidth="Infinity" onAction="#chargerListeClasses"
-                    styleClass="menu-btn" text="📋   Liste des classes"/>
         </VBox>
 
         <Region VBox.vgrow="ALWAYS"/>
