@@ -73,6 +73,15 @@ public class UserFormController {
                 (o, old, n) -> { if (!n.isEmpty()) validerPassword(); });
         cbRole.valueProperty().addListener(
                 (o, old, n) -> validerRole());
+        
+        // Validation téléphone : accepter uniquement les chiffres
+        txtTelephone.textProperty().addListener((o, old, n) -> {
+            String filtered = n.replaceAll("[^0-9]", "");
+            if (!filtered.equals(n)) {
+                txtTelephone.setText(filtered);
+            }
+            if (!filtered.isEmpty()) validerTelephone();
+        });
 
         // Recherche pays en temps réel
         txtRecherchePaysForm.textProperty()
@@ -335,13 +344,28 @@ public class UserFormController {
         return true;
     }
 
+    private boolean validerTelephone() {
+        String v = txtTelephone.getText().trim();
+        if (v.isEmpty()) {
+            return true; // Le téléphone est optionnel
+        }
+        if (!v.matches("^[0-9]{8,}$")) {
+            setErreur(txtTelephone, new Label(),
+                    "Minimum 8 chiffres, pas de lettres.");
+            return false;
+        }
+        setOk(txtTelephone, new Label());
+        return true;
+    }
+
     private boolean validerTout() {
         boolean n  = validerNom();
         boolean p  = validerPrenom();
         boolean e  = validerEmail();
         boolean pw = validerPassword();
         boolean r  = validerRole();
-        return n && p && e && pw && r;
+        boolean t  = validerTelephone();
+        return n && p && e && pw && r && t;
     }
 
     // ── Style champs ──────────────────────────────────────────────

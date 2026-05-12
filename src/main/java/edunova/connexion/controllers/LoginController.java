@@ -6,8 +6,6 @@ import edunova.connexion.models.User;
 import edunova.connexion.models.RiskData;
 import edunova.connexion.tools.*;
 
-import com.google.api.services.oauth2.model.Userinfo;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -97,6 +95,14 @@ public class LoginController {
             if (!n.isEmpty()) validerRegPrenom(); });
         txtRegEmail.textProperty().addListener((o, old, n) -> {
             if (!n.isEmpty()) validerRegEmail(); });
+        txtRegTel.textProperty().addListener((o, old, n) -> {
+            // Accepter uniquement les chiffres
+            String filtered = n.replaceAll("[^0-9]", "");
+            if (!filtered.equals(n)) {
+                txtRegTel.setText(filtered);
+            }
+            if (!filtered.isEmpty()) validerRegTel();
+        });
         txtRegPassword.textProperty().addListener((o, old, n) -> {
             if (!n.isEmpty()) validerRegPassword(); });
         txtRegConfirm.textProperty().addListener((o, old, n) -> {
@@ -583,6 +589,18 @@ public class LoginController {
         }
     }
 
+    // ── Récupérer l'ID du rôle par son nom ────────────────────────
+    private int getRoleIdByName(String roleName) {
+        List<String[]> roles = dao.findAllRoles();
+        for (String[] role : roles) {
+            if (role[1].equals(roleName)) {
+                return Integer.parseInt(role[0]);
+            }
+        }
+        // Par défaut, retourner l'ID du rôle "Étudiant" (généralement 1)
+        return 1;
+    }
+
     // ── Enregistrer Données de Connexion ──────────────────────────
     private void enregistrerDonneesConnexion(
             Connection conn, int userId) {
@@ -658,10 +676,11 @@ public class LoginController {
         boolean n  = validerRegNom();
         boolean p  = validerRegPrenom();
         boolean e  = validerRegEmail();
+        boolean t  = validerRegTel();
         boolean pw = validerRegPassword();
         boolean cf = validerRegConfirm();
         boolean cg = validerCgu();
-        if (!n || !p || !e || !pw || !cf || !cg)
+        if (!n || !p || !e || !t || !pw || !cf || !cg)
             return;
 
         User u = new User();
@@ -674,6 +693,10 @@ public class LoginController {
         u.setTelephone(numero);
         u.setPassword(txtRegPassword.getText());
         u.setActif(true);
+        
+        // 🔧 Assigner automatiquement le rôle "Étudiant" lors de l'inscription
+        int roleEtudiantId = getRoleIdByName("Etudiant");
+        u.setRoleId(roleEtudiantId);
 
         if (dao.insert(u)) {
             showAlert("✅ Compte créé avec succès !\n\n" +
@@ -763,6 +786,21 @@ public class LoginController {
             return false;
         }
         setOk(txtRegEmail, errRegEmail);
+        return true;
+    }
+
+    private boolean validerRegTel() {
+        String v = txtRegTel.getText().trim();
+        if (v.isEmpty()) {
+            errRegTel.setText("");
+            return true; // Le téléphone est optionnel
+        }
+        if (!v.matches("^[0-9]{8,}$")) {
+            setErreur(txtRegTel, errRegTel,
+                    "Minimum 8 chiffres, pas de lettres.");
+            return false;
+        }
+        setOk(txtRegTel, errRegTel);
         return true;
     }
 
