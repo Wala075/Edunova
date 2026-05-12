@@ -9,81 +9,6 @@ import java.util.*;
 
 public class PhonePickerController {
 
-    // ── MAP des drapeaux par code de pays ────────────────────────
-    private static final Map<String, String> DRAPEAUX = new HashMap<>();
-    
-    static {
-        // Afrique du Nord & Moyen-Orient
-        DRAPEAUX.put("Tunisie", "🇹🇳");
-        DRAPEAUX.put("Maroc", "🇲🇦");
-        DRAPEAUX.put("Algérie", "🇩🇿");
-        DRAPEAUX.put("Libye", "🇱🇾");
-        DRAPEAUX.put("Égypte", "🇪🇬");
-        DRAPEAUX.put("Arabie Saoudite", "🇸🇦");
-        DRAPEAUX.put("Émirats Arabes", "🇦🇪");
-        DRAPEAUX.put("Qatar", "🇶🇦");
-        DRAPEAUX.put("Koweït", "🇰🇼");
-        DRAPEAUX.put("Jordanie", "🇯🇴");
-        DRAPEAUX.put("Liban", "🇱🇧");
-        DRAPEAUX.put("Syrie", "🇸🇾");
-        DRAPEAUX.put("Irak", "🇮🇶");
-        DRAPEAUX.put("Yémen", "🇾🇪");
-        DRAPEAUX.put("Oman", "🇴🇲");
-        DRAPEAUX.put("Bahreïn", "🇧🇭");
-        DRAPEAUX.put("Soudan", "🇸🇩");
-        DRAPEAUX.put("Mauritanie", "🇲🇷");
-        // Europe
-        DRAPEAUX.put("France", "🇫🇷");
-        DRAPEAUX.put("Allemagne", "🇩🇪");
-        DRAPEAUX.put("Royaume-Uni", "🇬🇧");
-        DRAPEAUX.put("Italie", "🇮🇹");
-        DRAPEAUX.put("Espagne", "🇪🇸");
-        DRAPEAUX.put("Belgique", "🇧🇪");
-        DRAPEAUX.put("Suisse", "🇨🇭");
-        DRAPEAUX.put("Pays-Bas", "🇳🇱");
-        DRAPEAUX.put("Portugal", "🇵🇹");
-        DRAPEAUX.put("Suède", "🇸🇪");
-        DRAPEAUX.put("Norvège", "🇳🇴");
-        DRAPEAUX.put("Danemark", "🇩🇰");
-        DRAPEAUX.put("Pologne", "🇵🇱");
-        DRAPEAUX.put("Roumanie", "🇷🇴");
-        DRAPEAUX.put("Grèce", "🇬🇷");
-        DRAPEAUX.put("Turquie", "🇹🇷");
-        DRAPEAUX.put("Russie", "🇷🇺");
-        // Amériques
-        DRAPEAUX.put("États-Unis", "🇺🇸");
-        DRAPEAUX.put("Canada", "🇨🇦");
-        DRAPEAUX.put("Brésil", "🇧🇷");
-        DRAPEAUX.put("Mexique", "🇲🇽");
-        DRAPEAUX.put("Argentine", "🇦🇷");
-        DRAPEAUX.put("Chili", "🇨🇱");
-        DRAPEAUX.put("Colombie", "🇨🇴");
-        // Asie
-        DRAPEAUX.put("Chine", "🇨🇳");
-        DRAPEAUX.put("Japon", "🇯🇵");
-        DRAPEAUX.put("Corée du Sud", "🇰🇷");
-        DRAPEAUX.put("Inde", "🇮🇳");
-        DRAPEAUX.put("Pakistan", "🇵🇰");
-        DRAPEAUX.put("Indonésie", "🇮🇩");
-        DRAPEAUX.put("Malaisie", "🇲🇾");
-        DRAPEAUX.put("Philippines", "🇵🇭");
-        DRAPEAUX.put("Vietnam", "🇻🇳");
-        DRAPEAUX.put("Thaïlande", "🇹🇭");
-        DRAPEAUX.put("Iran", "🇮🇷");
-        // Afrique
-        DRAPEAUX.put("Sénégal", "🇸🇳");
-        DRAPEAUX.put("Côte d'Ivoire", "🇨🇮");
-        DRAPEAUX.put("Cameroun", "🇨🇲");
-        DRAPEAUX.put("Ghana", "🇬🇭");
-        DRAPEAUX.put("Nigéria", "🇳🇬");
-        DRAPEAUX.put("Kenya", "🇰🇪");
-        DRAPEAUX.put("Afrique du Sud", "🇿🇦");
-        DRAPEAUX.put("Éthiopie", "🇪🇹");
-        // Océanie
-        DRAPEAUX.put("Australie", "🇦🇺");
-        DRAPEAUX.put("Nouvelle-Zélande", "🇳🇿");
-    }
-
     // ── PAYS publique pour accès depuis autres controllers ────────
     public static final LinkedHashMap<String, String>
             PAYS = new LinkedHashMap<>();
@@ -93,77 +18,81 @@ public class PhonePickerController {
         List<Map.Entry<String, String>> paysTemp = new ArrayList<>();
         
         // Afrique du Nord & Moyen-Orient
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Tunisie",          "+216"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Maroc",            "+212"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Algérie",          "+213"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Libye",            "+218"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Égypte",           "+20"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Arabie Saoudite",  "+966"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Émirats Arabes",   "+971"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Qatar",            "+974"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Koweït",           "+965"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Jordanie",         "+962"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Liban",            "+961"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Syrie",            "+963"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Irak",             "+964"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Yémen",            "+967"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Oman",             "+968"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Bahreïn",          "+973"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Soudan",           "+249"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Mauritanie",       "+222"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇹🇳 Tunisie",          "+216"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇲🇦 Maroc",            "+212"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇩🇿 Algérie",          "+213"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇱🇾 Libye",            "+218"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇪🇬 Égypte",           "+20"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇸🇦 Arabie Saoudite",  "+966"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇦🇪 Émirats Arabes",   "+971"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇶🇦 Qatar",            "+974"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇰🇼 Koweït",           "+965"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇯🇴 Jordanie",         "+962"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇱🇧 Liban",            "+961"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇸🇾 Syrie",            "+963"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇮🇶 Irak",             "+964"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇾🇪 Yémen",            "+967"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇴🇲 Oman",             "+968"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇧🇭 Bahreïn",          "+973"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇸🇩 Soudan",           "+249"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇲🇷 Mauritanie",       "+222"));
         // Europe
-        paysTemp.add(new AbstractMap.SimpleEntry<>("France",           "+33"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Allemagne",        "+49"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Royaume-Uni",      "+44"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Italie",           "+39"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Espagne",          "+34"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Belgique",         "+32"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Suisse",           "+41"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Pays-Bas",         "+31"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Portugal",         "+351"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Suède",            "+46"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Norvège",          "+47"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Danemark",         "+45"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Pologne",          "+48"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Roumanie",         "+40"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Grèce",            "+30"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Turquie",          "+90"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Russie",           "+7"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇫🇷 France",           "+33"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇩🇪 Allemagne",        "+49"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇬🇧 Royaume-Uni",      "+44"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇮🇹 Italie",           "+39"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇪🇸 Espagne",          "+34"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇧🇪 Belgique",         "+32"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇨🇭 Suisse",           "+41"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇳🇱 Pays-Bas",         "+31"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇵🇹 Portugal",         "+351"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇸🇪 Suède",            "+46"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇳🇴 Norvège",          "+47"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇩🇰 Danemark",         "+45"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇵🇱 Pologne",          "+48"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇷🇴 Roumanie",         "+40"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇬🇷 Grèce",            "+30"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇹🇷 Turquie",          "+90"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇷🇺 Russie",           "+7"));
         // Amériques
-        paysTemp.add(new AbstractMap.SimpleEntry<>("États-Unis",       "+1"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Canada",           "+1"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Brésil",           "+55"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Mexique",          "+52"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Argentine",        "+54"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Chili",            "+56"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Colombie",         "+57"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇺🇸 États-Unis",       "+1"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇨🇦 Canada",           "+1"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇧🇷 Brésil",           "+55"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇲🇽 Mexique",          "+52"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇦🇷 Argentine",        "+54"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇨🇱 Chili",            "+56"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇨🇴 Colombie",         "+57"));
         // Asie
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Chine",            "+86"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Japon",            "+81"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Corée du Sud",     "+82"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Inde",             "+91"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Pakistan",         "+92"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Indonésie",        "+62"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Malaisie",         "+60"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Philippines",      "+63"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Vietnam",          "+84"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Thaïlande",        "+66"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Iran",             "+98"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇨🇳 Chine",            "+86"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇯🇵 Japon",            "+81"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇰🇷 Corée du Sud",     "+82"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇮🇳 Inde",             "+91"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇵🇰 Pakistan",         "+92"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇮🇩 Indonésie",        "+62"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇲🇾 Malaisie",         "+60"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇵🇭 Philippines",      "+63"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇻🇳 Vietnam",          "+84"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇹🇭 Thaïlande",        "+66"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇮🇷 Iran",             "+98"));
         // Afrique
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Sénégal",          "+221"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Côte d'Ivoire",    "+225"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Cameroun",         "+237"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Ghana",            "+233"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Nigéria",          "+234"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Kenya",            "+254"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Afrique du Sud",   "+27"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Éthiopie",         "+251"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇸🇳 Sénégal",          "+221"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇨🇮 Côte d'Ivoire",    "+225"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇨🇲 Cameroun",         "+237"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇬🇭 Ghana",            "+233"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇳🇬 Nigéria",          "+234"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇰🇪 Kenya",            "+254"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇿🇦 Afrique du Sud",   "+27"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇪🇹 Éthiopie",         "+251"));
         // Océanie
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Australie",        "+61"));
-        paysTemp.add(new AbstractMap.SimpleEntry<>("Nouvelle-Zélande", "+64"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇦🇺 Australie",        "+61"));
+        paysTemp.add(new AbstractMap.SimpleEntry<>("🇳🇿 Nouvelle-Zélande", "+64"));
         
-        // Trier par ordre alphabétique
-        paysTemp.sort((a, b) -> a.getKey().compareToIgnoreCase(b.getKey()));
+        // Trier par ordre alphabétique (en ignorant le drapeau)
+        paysTemp.sort((a, b) -> {
+            String nomA = getNomSansEmoji(a.getKey());
+            String nomB = getNomSansEmoji(b.getKey());
+            return nomA.compareToIgnoreCase(nomB);
+        });
         
         // Ajouter les pays triés au LinkedHashMap
         for (Map.Entry<String, String> entry : paysTemp) {
@@ -173,13 +102,12 @@ public class PhonePickerController {
 
     // ── Extraire emoji, nom, code depuis une entrée ───────────────
     public static String getEmoji(String paysNom) {
-        // Chercher le drapeau dans la map
-        String drapeau = DRAPEAUX.get(paysNom);
-        return drapeau != null ? drapeau : "🌍";
+        return paysNom.split(" ")[0];
     }
 
     public static String getNomSansEmoji(String paysNom) {
-        return paysNom;
+        String[] parts = paysNom.split(" ", 2);
+        return parts.length > 1 ? parts[1] : paysNom;
     }
 
     // ── Créer un item dropdown professionnel ──────────────────────
@@ -204,12 +132,8 @@ public class PhonePickerController {
 
         // ── Drapeau ───────────────────────────────────────────────
         Label lblEmoji = new Label(getEmoji(pays));
-        lblEmoji.setStyle(
-                "-fx-font-size: 24;" +
-                "-fx-text-alignment: center;" +
-                "-fx-padding: 0 5;");
-        lblEmoji.setMinWidth(40);
-        lblEmoji.setAlignment(Pos.CENTER);
+        lblEmoji.setStyle("-fx-font-size: 20;");
+        lblEmoji.setMinWidth(30);
 
         // ── Nom du pays ───────────────────────────────────────────
         Label lblNom = new Label(getNomSansEmoji(pays));
